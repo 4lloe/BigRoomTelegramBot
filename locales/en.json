@@ -1,0 +1,11 @@
+{
+    "welcome_message": "Hello, Im the Big Room bot, designed to assist you in your work! Choose an action:",
+    "account_info": "Information about your account:",
+    "settings_info": "Your account settings:",
+    "tariffs_info": "Currently, the following tariffs are in effect:",
+    "account_btn" : "Account",
+    "settings_btn" : "Settings",
+    "tariffs_btn" : "Subscribe",
+    "allow_models_btn" : "Models"
+}
+
