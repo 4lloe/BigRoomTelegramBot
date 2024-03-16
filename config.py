@@ -29,7 +29,7 @@ def get_translation(lang_code, key):
 
 
 def get_user_language(user_id):
-    if user_id in user_language:
-        return user_language[user_id]
+    if user_id in user_state:
+        return user_state[user_id]
     else:
         return 'en'
