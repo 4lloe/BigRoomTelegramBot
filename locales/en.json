@@ -6,6 +6,10 @@
     "account_btn" : "Account",
     "settings_btn" : "Settings",
     "tariffs_btn" : "Subscribe",
-    "allow_models_btn" : "Models"
+    "allow_models_btn" : "Models",
+    "models_message" : "Currently available are three models namely:\n    -Claude 3 Haiku\n   -Claude 3 Sonnet\n  -ChatGPT Turbo",
+    "account_message" : "EN/Реализация аккаунта с id и всей херней",
+    "tariffs_message" : "You can purchase three tariffs\n 1.Claude 3 Haiku - $15\n 2.-Claude 3 Sonnet - $20\n 3.ChatGPT Turbo - $30",
+    "settings_message" : "In this section, you can choose the following settings:\n 1.Language settings"
 }
 

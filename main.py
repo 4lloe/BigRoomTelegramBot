@@ -3,21 +3,19 @@ import config
 import emoji
 from telebot import types
 
-bot = telebot.TeleBot(config.telegrambot_token)
+bot = config.bot
 
-# Инициализируем состояние каждого пользователя
-config.user_states = {}  # {user_id: {'started': False, 'language': None}}
 
 @bot.message_handler(commands=['start'])
 def start_command(message):
     user_id = message.from_user.id
-    if user_id not in config.user_states:
+    if user_id not in config.user_state:
         # Устанавливаем начальное состояние для пользователя
-        config.user_states[user_id] = {'started': True, 'language': None}
+        config.user_state[user_id] = {'started': True, 'language': None}
         change_language(message)  # Запускаем процесс выбора языка
     else:
-        # Пользователь уже запустил бота и выбрал язык, выводим клавиатуру
-        show_keyboard(message)
+        config.show_keyboard(message)
+        handle_message(message)
 
 @bot.message_handler(commands=['language'])
 def change_language(message):
@@ -32,7 +30,7 @@ def change_language(message):
 def set_language(call):
     user_id = call.from_user.id
     lang_code = call.data.split('_')[1]
-    config.user_states[user_id]['language'] = lang_code  # Сохраняем выбранный язык
+    config.user_state[user_id]['language'] = lang_code  # Сохраняем выбранный язык
 
     if lang_code == 'en':
         bot.answer_callback_query(call.id, "English selected!")
@@ -42,70 +40,46 @@ def set_language(call):
         bot.answer_callback_query(call.id, "Українська вибрана!")
 
     bot.delete_message(call.message.chat.id, call.message.message_id)
-    show_keyboard(user_id)  # Показываем клавиатуру после выбора языка
+    config.show_keyboard(user_id)  # Показываем клавиатуру после выбора языка
 
-def get_user_lang(user_id):
 
-    if config.user_states[user_id]['language'] is None:
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton('English', callback_data='lang_en'))
-        markup.add(types.InlineKeyboardButton('Russian', callback_data='lang_ru'))
-        markup.add(types.InlineKeyboardButton('Ukrainian', callback_data='lang_ua'))
-        bot.send_message(user_id, 'Choose language:', reply_markup=markup)
-    else:
-        show_keyboard(user_id)
 
-def show_keyboard(user_id):
-    if user_id in config.user_states and config.user_states[user_id]['language']:
-        user_lang = config.user_states[user_id]['language']
-        welcome_message = config.get_translation(user_lang, "welcome_message")
-        account_btn = config.get_translation(user_lang, "account_btn")
-        settings_btn = config.get_translation(user_lang, "settings_btn")
-        tariffs_btn = config.get_translation(user_lang, "tariffs_btn")
-        allow_models_btn = config.get_translation(user_lang, "allow_models_btn")
 
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-        markup.add(account_btn, settings_btn, allow_models_btn, tariffs_btn)
 
-        bot.send_message(user_id, welcome_message, reply_markup=markup)
-
-    else:
-        get_user_lang(user_id)
-
-def on_click(message):
-    # Получаем user_id из сообщения
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
     user_id = message.from_user.id
-    # Проверяем, что пользователь выбрал язык
-    if user_id in config.user_states and config.user_states[user_id]['language']:
-        # Получаем выбранный пользователем язык
-        user_lang = config.user_states[user_id]['language']
-        # Текст сообщения
-        command_text = message.text
+    user_lang = config.user_state[user_id].get('language') if user_id in config.user_state else None
 
-        # Словарь команд и их переводов
-        commands = {
-            'account_btn': config.get_translation(user_lang, "account_btn"),
-            'settings_btn': config.get_translation(user_lang, "settings_btn"),
-            'tariffs_btn': config.get_translation(user_lang, "tariffs_btn"),
-            'allow_models_btn': config.get_translation(user_lang, "allow_models_btn")
-        }
+    if user_lang:
+        user_lang = config.user_state[user_id]['language']
+        account_text = config.get_translation(user_lang, "account_btn")
+        settings_text = config.get_translation(user_lang, "settings_btn")
+        tariffs_text = config.get_translation(user_lang, "tariffs_btn")
+        allow_models_text = config.get_translation(user_lang, "allow_models_btn")
 
-        # Проверяем, какая кнопка была нажата и выполняем соответствующие действия
-        if command_text == commands['account_btn']:
-            # Здесь логика для команды "account_btn"
-            pass
-        elif command_text == commands['settings_btn']:
-            pass
-        elif command_text == commands['tariffs_btn']:
-            # Здесь логика для команды "tariffs_btn"
-            pass
-        elif command_text == commands['allow_models_btn']:
-            # Здесь логика для команды "allow_models_btn"
-            pass
+        # Проверяем текст сообщения и выполняем соответствующее действие
+        if message.text == account_text:
+            bot.send_message(user_id, {config.get_translation(user_lang, "account_message")})
+            config.show_keyboard(user_id)
+        elif message.text == settings_text:
+            # Логика для кнопки "Настройки"
+            bot.send_message(user_id, {config.get_translation(user_lang, "settings_message")})
+            config.show_keyboard(user_id)
+        elif message.text == tariffs_text:
+            # Логика для кнопки "Тарифы"
+            bot.send_message(user_id, {config.get_translation(user_lang, "tariffs_message")})
+            config.show_keyboard(user_id)
+        elif message.text == allow_models_text:
+            # Логика для кнопки "Доступные модели"
+            bot.send_message(user_id, {config.get_translation(user_lang, "models_message")})
+            config.show_keyboard(user_id)
         else:
-            # Если нажатая кнопка не соответствует ни одной из команд
-            bot.send_message(user_id, config.get_translation(user_lang, "unknown_command"))
+            bot.send_message(user_id, "Неизвестная команда.")
     else:
-        get_user_lang(user_id)
+        # Если язык не выбран, запрашиваем его выбор
+        change_language(message)
+
+
 
 bot.infinity_polling()
