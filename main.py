@@ -43,9 +43,6 @@ def set_language(call):
     config.show_keyboard(user_id)  # Показываем клавиатуру после выбора языка
 
 
-
-
-
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     user_id = message.from_user.id

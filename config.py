@@ -49,6 +49,7 @@ def get_user_lang(user_id):
         show_keyboard(user_id)
 
 
+#Метод реализующий вывод кастомной клавиатуры с опциями
 def show_keyboard(user_id):
     if user_id in user_state and user_state[user_id]['language']:
         user_lang = user_state[user_id]['language']
