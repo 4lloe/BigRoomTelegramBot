@@ -11,10 +11,13 @@ def start_command(message):
     user_id = message.from_user.id
     if user_id not in config.user_state:
         # Устанавливаем начальное состояние для пользователя
-        config.user_state[user_id] = {'started': True, 'language': None}
+
         change_language(message)  # Запускаем процесс выбора языка
     else:
-        config.show_keyboard(message)
+        config.user_init(user_id)
+        user_lang = config.user_state[user_id]['language']
+        welcome_message = config.get_translation(user_lang, "welcome_message")
+        config.show_keyboard(user_id, welcome_message)
         handle_message(message)
 
 @bot.message_handler(commands=['language'])
@@ -26,11 +29,16 @@ def change_language(message):
     markup.add(types.InlineKeyboardButton('Ukrainian', callback_data='lang_ua'))
     bot.send_message(user_id, 'Choose language:', reply_markup=markup)
 
+
+
 @bot.callback_query_handler(func=lambda call: call.data.startswith('lang_'))
 def set_language(call):
     user_id = call.from_user.id
     lang_code = call.data.split('_')[1]
-    config.user_state[user_id]['language'] = lang_code  # Сохраняем выбранный язык
+
+    if user_id not in config.user_state:
+        config.user_state[user_id] = {'language': None}
+    config.user_state[user_id]['language'] = lang_code# Сохраняем выбранный язык
 
     if lang_code == 'en':
         bot.answer_callback_query(call.id, "English selected!")
@@ -40,10 +48,13 @@ def set_language(call):
         bot.answer_callback_query(call.id, "Українська вибрана!")
 
     bot.delete_message(call.message.chat.id, call.message.message_id)
-    config.show_keyboard(user_id)  # Показываем клавиатуру после выбора языка
+    user_lang = config.user_state[user_id]['language']
+    welcome_message = config.get_translation(user_lang, "welcome_message")
+    config.show_keyboard(user_id, welcome_message)
 
 
-@bot.message_handler(func=lambda message: True)
+
+@bot.message_handler(func= lambda message: True)
 def handle_message(message):
     user_id = message.from_user.id
     user_lang = config.user_state[user_id].get('language') if user_id in config.user_state else None
@@ -57,26 +68,35 @@ def handle_message(message):
 
         # Проверяем текст сообщения и выполняем соответствующее действие
         if message.text == account_text:
-            bot.send_message(user_id, {config.get_translation(user_lang, "account_message")})
-            config.show_keyboard(user_id)
+            call = config.get_translation(user_lang, "account_message")
+            config.show_account(user_id)
+            config.show_keyboard(user_id, call)
         elif message.text == settings_text:
             # Логика для кнопки "Настройки"
-            bot.send_message(user_id, {config.get_translation(user_lang, "settings_message")})
-            config.show_keyboard(user_id)
+            call = config.get_translation(user_lang, "settings_message")
+            config.show_keyboard(user_id, call)
         elif message.text == tariffs_text:
             # Логика для кнопки "Тарифы"
-            bot.send_message(user_id, {config.get_translation(user_lang, "tariffs_message")})
-            config.show_keyboard(user_id)
+            call = config.get_translation(user_lang, "tariffs_message")
+            config.show_keyboard(user_id, call)
         elif message.text == allow_models_text:
             # Логика для кнопки "Доступные модели"
-            bot.send_message(user_id, {config.get_translation(user_lang, "models_message")})
-            config.show_keyboard(user_id)
+            call = config.get_translation(user_lang, "models_message")
+            config.show_keyboard(user_id, call)
         else:
-            bot.send_message(user_id, "Неизвестная команда.")
+            call = "Неизвестная команда."
+            config.show_keyboard(user_id, call)
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'settings')
+def callback_settings(call):
+    bot.send_message(call.message.chat.id, "enylogic")
+
+@bot.callback_query_handler(func=lambda call: call.data == 'buy_premium')
+def callback_buy_premium(call):
+    bot.send_message(call.message.chat.id, "enylogic")
 
 
 bot.infinity_polling()
