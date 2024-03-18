@@ -11,14 +11,16 @@ def start_command(message):
     user_id = message.from_user.id
     if user_id not in config.user_state:
         # Устанавливаем начальное состояние для пользователя
-
         change_language(message)  # Запускаем процесс выбора языка
     else:
-        config.user_init(user_id)
-        user_lang = config.user_state[user_id]['language']
-        welcome_message = config.get_translation(user_lang, "welcome_message")
-        config.show_keyboard(user_id, welcome_message)
-        handle_message(message)
+        user_lang = config.user_state[user_id].get('language')
+        if not user_lang:  # Проверяем, установил ли пользователь язык
+            change_language(message)  # Если нет, запускаем процесс выбора языка
+        else:
+            welcome_message = config.get_translation(user_lang, "welcome_message")
+            config.show_keyboard(user_id, welcome_message)
+            handle_message(message)
+
 
 @bot.message_handler(commands=['language'])
 def change_language(message):
@@ -29,7 +31,11 @@ def change_language(message):
     markup.add(types.InlineKeyboardButton('Ukrainian', callback_data='lang_ua'))
     bot.send_message(user_id, 'Choose language:', reply_markup=markup)
 
-
+@bot.message_handler(commands=['settings'])
+def show_settings(user_id):
+    user_lang = config.user_state[user_id]['language']
+    settings_text = "⚙️"+config.get_translation(user_lang, "settings_text")
+    bot.send_message(user_id,settings_text,reply_markup=config.get_settings_inline_keyboard(user_id))
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('lang_'))
 def set_language(call):
@@ -68,35 +74,32 @@ def handle_message(message):
 
         # Проверяем текст сообщения и выполняем соответствующее действие
         if message.text == account_text:
-            call = config.get_translation(user_lang, "account_message")
             config.show_account(user_id)
-            config.show_keyboard(user_id, call)
         elif message.text == settings_text:
             # Логика для кнопки "Настройки"
-            call = config.get_translation(user_lang, "settings_message")
-            config.show_keyboard(user_id, call)
+            config.get_translation(user_lang, "settings_message")
+            show_settings(user_id)
         elif message.text == tariffs_text:
             # Логика для кнопки "Тарифы"
-            call = config.get_translation(user_lang, "tariffs_message")
-            config.show_keyboard(user_id, call)
+            config.get_translation(user_lang, "tariffs_message")
         elif message.text == allow_models_text:
             # Логика для кнопки "Доступные модели"
-            call = config.get_translation(user_lang, "models_message")
-            config.show_keyboard(user_id, call)
-        else:
-            call = "Неизвестная команда."
-            config.show_keyboard(user_id, call)
+            config.get_translation(user_lang, "models_message")
+
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'settings')
-def callback_settings(call):
-    bot.send_message(call.message.chat.id, "enylogic")
+def callback_settings(message):
+    user_id = message.from_user.id
+    show_settings(user_id)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'buy_premium')
-def callback_buy_premium(call):
-    bot.send_message(call.message.chat.id, "enylogic")
+@bot.callback_query_handler(func=lambda call: call.data == 'buy_subscribe')
+def callback_buy_premium(message):
+    bot.delete_message(message.chat.id, message.message_id)
+    config.show_subscribe(message)
+
 
 
 bot.infinity_polling()
