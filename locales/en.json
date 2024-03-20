@@ -9,11 +9,15 @@
     "allow_models_btn" : "Models",
     "buy_subscribe_btn": "Buy a subscribe",
     "models_message" : "Currently available are three models namely:\n   -Marketolog \n   -Burunduk \n   -Dietolog",
-    "tariffs_message" : "You can purchase three tariffs\n 1.Claude 3 Haiku - $15\n 2.-Claude 3 Sonnet - $20\n 3.ChatGPT Turbo - $30",
+    "subscribe_message" : "You can purchase three tariffs\n 1.Claude 3 Haiku - $15\n 2.-Claude 3 Sonnet - $20\n 3.ChatGPT Turbo - $30",
     "settings_message" : "In this section, you can choose the following settings:\n 1.Language settings",
     "sb_voice_answers_btn" : "Voice answers",
     "sb_answers_creativity_btn" : "Creativity of answers",
     "sb_language_change_btn" : "Change language",
+    "close_btn" : "Back",
+    "marketer_btn" : "Marketer",
+    "programmer_btn" : "Programmer",
+    "trader_btn" : "Trader",
     "settings_text" : "In the settings you can change:\n\n1.Enable/Disable voice responses\n2.Select the creativity of the neural network’s responses\n3.Select interface language",
     "something_wrong" : "Something wrong, try again"
 }

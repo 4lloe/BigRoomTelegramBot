@@ -9,12 +9,15 @@
     "allow_models_btn" : "Моделі",
     "buy_subscribe_btn": "Купити підписку",
     "models_message" : "Наразі доступні три моделі а саме:\n   -Маркітолог\n   -Діїтолог\n   -Бурундук",
-    "tariffs_message" : "Ви можете придбати три тарифи\n 1.Claude 3 Haiku - 15$\n 2.-Claude 3 Sonnet - 20$\n 3.ChatGPT Turbo - 30$",
+    "subscribe_message" : "Ви можете придбати три тарифи\n 1.Claude 3 Haiku - 15$\n 2.-Claude 3 Sonnet - 20$\n 3.ChatGPT Turbo - 30$",
     "settings_message" : "У даному розділі ви сожете обрати наступні налаштування:\n 1.Налаштування мови",
     "sb_voice_answers_btn" : "Голосові відповіді",
     "sb_answers_creativity_btn" : "Креативність відаовідей",
     "sb_language_change_btn" : "Змінити мову",
+    "close_btn" : "Назад",
+    "marketer_btn" : "Маркетолог",
+    "programmer_btn" : "Програміст",
+    "trader_btn" : "Трейдер",
     "settings_text" : "У налаштуваннях ви можете змінити:\n\n1.Увімкнути/Вимкнути голосові відповіді\n2.Вибрати креативність відповідей нейромережі\n3.Обрати мову інтерфейсу",
     "something_wrong" : "Щось сталося, спробуйте знову"
-
 }
