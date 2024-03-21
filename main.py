@@ -1,6 +1,6 @@
 import telebot
 import config
-import emoji
+import interactions
 from telebot import types
 
 bot = config.bot
@@ -9,17 +9,18 @@ bot = config.bot
 @bot.message_handler(commands=['start'])
 def start_command(message):
     user_id = message.from_user.id
-    config.user_init(user_id)
     if user_id not in config.user_state:
-        # Устанавливаем начальное состояние для пользователя
-        change_language(message)  # Запускаем процесс выбора языка
+        config.user_init(user_id)
+        change_language(message)
     else:
         user_lang = config.user_state[user_id].get('language')
-        if not user_lang:  # Проверяем, установил ли пользователь язык
-            change_language(message)  # Если нет, запускаем процесс выбора языка
+        if not user_lang:
+            change_language(message)
         else:
             welcome_message = config.get_translation(user_lang, "welcome_message")
             config.show_keyboard(user_id, welcome_message)
+            bot.send_message(user_id, interactions.show_bot_preview(user_lang),
+                             reply_markup=config.get_preview_inline_keyboard(user_id))
             handle_message(message)
 
 #Функция реализующая отклик на команду /languag для установки языка пользователя
@@ -45,30 +46,39 @@ def show_settings(message):
 def show_subscribe(message):
     user_id = message.from_user.id
     user_lang = config.user_state[user_id]['language']
-    config.subscribe_text(message)
+    interactions.subscribe_text(message)
 
 
-#Функция установки языка и вывода виджета выбраного языка
 @bot.callback_query_handler(func=lambda call: call.data.startswith('lang_'))
 def set_language(call):
+    global language_selected
     user_id = call.from_user.id
     lang_code = call.data.split('_')[1]
+    is_new_user = user_id not in config.user_state or config.user_state[user_id].get('language') is None
 
     if user_id not in config.user_state:
         config.user_state[user_id] = {'language': None}
-    config.user_state[user_id]['language'] = lang_code# Сохраняем выбранный язык
+
+    config.user_state[user_id]['language'] = lang_code
+    user_lang = config.user_state[user_id]['language']
 
     if lang_code == 'en':
         bot.answer_callback_query(call.id, "English selected!")
+        language_selected = "🇬🇧" + config.get_translation(user_lang, "language_selected")
     elif lang_code == 'ru':
         bot.answer_callback_query(call.id, "Русский выбран!")
+        language_selected = "🇷🇺" + config.get_translation(user_lang, "language_selected")
     elif lang_code == 'ua':
         bot.answer_callback_query(call.id, "Українська вибрана!")
+        language_selected = "🇺🇦" + config.get_translation(user_lang, "language_selected")
 
-    bot.delete_message(call.message.chat.id, call.message.message_id)
-    user_lang = config.user_state[user_id]['language']
-    welcome_message = config.get_translation(user_lang, "welcome_message")
-    config.show_keyboard(user_id, welcome_message)
+    if is_new_user:
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+        config.show_keyboard(user_id, language_selected)
+        start_command(call)
+    else:
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+        config.show_keyboard(user_id, language_selected)
 
 
 #Функция реагирования на нажатия клавиш главной клавиатуры
@@ -86,13 +96,13 @@ def handle_message(message):
 
         # Проверяем текст сообщения и выполняем соответствующее действие
         if message.text == account_text:
-            config.show_account(user_id)
+            interactions.show_account(user_id)
         elif message.text == settings_text:
             show_settings(message)
         elif message.text == tariffs_text:
             show_subscribe(message)
         elif message.text == allow_models_text:
-            config.model_description(message)
+            interactions.model_description(message)
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
@@ -108,27 +118,47 @@ def callback_subscribe(message):
     show_subscribe(message)
 
 #Функция ответа на нажатие кнопки Настройки->Голосовые ответы
-@bot.callback_query_handler(func=lambda call: call.data == 'voice_settings')
-def callback_voice_settings(call):
-    user_id = call.from_user.id
-    user_lang = config.user_state[user_id]['language']
-    message_text = config.get_translation(user_lang, "voice_settings_selected")
-    bot.send_message(user_id, message_text)
 
 #Функция ответа на нажатие кнопки Настройки->креативность ответов
 @bot.callback_query_handler(func=lambda call: call.data == 'creativity_settings')
 def callback_creativity_settings(call):
     user_id = call.from_user.id
-    user_lang = config.user_state[user_id]['language']
+    config.show_keyboard(user_id, "bot creativity was selected")
 
 @bot.callback_query_handler(func=lambda call: call.data == 'language_settings')
 def callback_language_settings(call):
-    change_language(call.from_user)
+    change_language(call)
 
 #Функция ответа на нажатие кнопки Настройки->Закрыть
 @bot.callback_query_handler(func=lambda call: call.data == 'close_callback')
 def callback_close_settings(call):
     bot.delete_message(call.message.chat.id, call.message.message_id)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'subscribe_callback')
+def subscribe_callback(call):
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+    show_subscribe(call)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'marketer_callback')
+def marketer_callback(call):
+    user_id = call.from_user.id
+    user_lang = config.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+    description = interactions.marketer_model_description(user_lang)
+    bot.send_message(user_id, description)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'programmer_callback')
+def marketer_callback(call):
+    user_id = call.from_user.id
+    user_lang = config.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+    description = interactions.programmer_model_description(user_lang)
+    bot.send_message(user_id, description)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'trader_callback')
+def marketer_callback(call):
+    user_id = call.from_user.id
+    user_lang = config.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+    description = interactions.trader_model_description(user_lang)
+    bot.send_message(user_id, description)
 
 
 bot.infinity_polling()

@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="Keyboard Account/settings update">
+    <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="Keyboard models/tarifs update">
+      <change afterPath="$PROJECT_DIR$/interactions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/en.json" afterDir="false" />
@@ -101,7 +102,11 @@
       <workItem from="1710858770304" duration="844000" />
       <workItem from="1710878419795" duration="47000" />
       <workItem from="1710926851625" duration="4208000" />
-      <workItem from="1710934294567" duration="9831000" />
+      <workItem from="1710934294567" duration="12021000" />
+      <workItem from="1710974572265" duration="53000" />
+      <workItem from="1711019284182" duration="1680000" />
+      <workItem from="1711035681768" duration="2203000" />
+      <workItem from="1711038131661" duration="8380000" />
     </task>
     <task id="LOCAL-00001" summary="bot creation">
       <option name="closed" value="true" />
@@ -159,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710785216055</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Keyboard Account/settings update">
+      <option name="closed" value="true" />
+      <created>1710944645220</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1710944645220</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,6 +198,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Keyboard Account/settings update" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$main.coverage" NAME="main Coverage Results" MODIFIED="1710943582209" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$main.coverage" NAME="main Coverage Results" MODIFIED="1711046268748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
