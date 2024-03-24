@@ -2,6 +2,7 @@ import json
 import telebot
 import datetime
 import anthropic
+import interactions
 from telebot import types
 
 telegrambot_token = "6981720034:AAFpPGkTreAt_WzUw65mPIxgMzdk4KJ2gV4"
@@ -13,6 +14,7 @@ bot = telebot.TeleBot(telegrambot_token)
 # !!!Заменить на БД
 # Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
 user_state = {}
+
 
 
 def user_init(user_id):  # Первая инициализация подписки FREE
@@ -28,6 +30,7 @@ def user_init(user_id):  # Первая инициализация подпис�
             'gptTurbo_req': 0,  # Счетчик запросов GPT-Turbo
             'payment_type': 'none'
         }
+
 
 def load_translations(lang_code):
     with open(f'locales/{lang_code}.json', 'r', encoding='utf-8') as file:
@@ -106,7 +109,6 @@ def get_settings_inline_keyboard(user_id):
     language_change_text = get_translation(user_lang, "sb_language_change_btn")
     close_text = get_translation(user_lang, "close_btn")
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton(text="🎨" + creativity_text, callback_data='creativity_settings'))
     markup.add(types.InlineKeyboardButton(text="🇺🇦" + language_change_text, callback_data='language_settings'))
     markup.add(types.InlineKeyboardButton(text=close_text, callback_data='close_callback'))
 
@@ -139,7 +141,8 @@ def get_subscribe_inline_keyboard(user_id):
 
     return markup
 
-#Функция создания InlineKeyboard для /models
+
+# Функция создания InlineKeyboard для /models
 def get_models_inline_keyboard(user_id):
     user_lang = user_state[user_id]['language']
     marketer = get_translation(user_lang, 'marketer_btn')
@@ -157,7 +160,8 @@ def get_models_inline_keyboard(user_id):
 
     return markup
 
-#Функция создания InlineKeyboard для первого сообщения после инициации /start
+
+# Функция создания InlineKeyboard для первого сообщения после инициации /start
 def get_preview_inline_keyboard(user_id):
     user_lang = user_state[user_id]['language']
     marketer = get_translation(user_lang, 'marketer_btn')
@@ -174,4 +178,13 @@ def get_preview_inline_keyboard(user_id):
 
     return markup
 
+
+def get_language_inline_k(user_id):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton('English', callback_data='lang_en'))
+    markup.add(types.InlineKeyboardButton('Russian', callback_data='lang_ru'))
+    markup.add(types.InlineKeyboardButton('Ukrainian', callback_data='lang_ua'))
+    bot.send_message(user_id, 'Choose language:', reply_markup=markup)
+def choose_language(user_id):
+    get_language_inline_k(user_id)
 

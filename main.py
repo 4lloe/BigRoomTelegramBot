@@ -21,9 +21,9 @@ def start_command(message):
             config.show_keyboard(user_id, welcome_message)
             bot.send_message(user_id, interactions.show_bot_preview(user_lang),
                              reply_markup=config.get_preview_inline_keyboard(user_id))
-            handle_message(message)
 
-#Функция реализующая отклик на команду /languag для установки языка пользователя
+
+#Функция реализующая отклик на команду /language для установки языка пользователя
 @bot.message_handler(commands=['language'])
 def change_language(message):
     user_id = message.from_user.id
@@ -48,7 +48,7 @@ def show_subscribe(message):
     user_lang = config.user_state[user_id]['language']
     interactions.subscribe_text(message)
 
-
+#Функция реализующая отклик команды смены языка
 @bot.callback_query_handler(func=lambda call: call.data.startswith('lang_'))
 def set_language(call):
     global language_selected
@@ -82,7 +82,7 @@ def set_language(call):
 
 
 #Функция реагирования на нажатия клавиш главной клавиатуры
-@bot.message_handler(func= lambda message: True)
+@bot.message_handler(func=lambda message: True)
 def handle_message(message):
     user_id = message.from_user.id
     user_lang = config.user_state[user_id].get('language') if user_id in config.user_state else None
@@ -117,14 +117,7 @@ def callback_settings(message):
 def callback_subscribe(message):
     show_subscribe(message)
 
-#Функция ответа на нажатие кнопки Настройки->Голосовые ответы
-
-#Функция ответа на нажатие кнопки Настройки->креативность ответов
-@bot.callback_query_handler(func=lambda call: call.data == 'creativity_settings')
-def callback_creativity_settings(call):
-    user_id = call.from_user.id
-    config.show_keyboard(user_id, "bot creativity was selected")
-
+#Функция ответа на нажатие кнопки Настройки->Настройки языка
 @bot.callback_query_handler(func=lambda call: call.data == 'language_settings')
 def callback_language_settings(call):
     change_language(call)
@@ -134,11 +127,13 @@ def callback_language_settings(call):
 def callback_close_settings(call):
     bot.delete_message(call.message.chat.id, call.message.message_id)
 
+#Функция ответа на нажатие кнопки Подписка
 @bot.callback_query_handler(func=lambda call: call.data == 'subscribe_callback')
 def subscribe_callback(call):
     bot.delete_message(call.message.chat.id, call.message.message_id)
     show_subscribe(call)
 
+#Функция ответа на нажатие кнопки Модели->Маркетолог
 @bot.callback_query_handler(func=lambda call: call.data == 'marketer_callback')
 def marketer_callback(call):
     user_id = call.from_user.id
@@ -146,15 +141,18 @@ def marketer_callback(call):
     description = interactions.marketer_model_description(user_lang)
     bot.send_message(user_id, description)
 
+
+#Функция ответа на нажатие кнопки Модели->Програмист
 @bot.callback_query_handler(func=lambda call: call.data == 'programmer_callback')
-def marketer_callback(call):
+def programmer_callback(call):
     user_id = call.from_user.id
     user_lang = config.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
     description = interactions.programmer_model_description(user_lang)
     bot.send_message(user_id, description)
 
+#Функция ответа на нажатие кнопки Модели->Трейдер
 @bot.callback_query_handler(func=lambda call: call.data == 'trader_callback')
-def marketer_callback(call):
+def trader_callback(call):
     user_id = call.from_user.id
     user_lang = config.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
     description = interactions.trader_model_description(user_lang)

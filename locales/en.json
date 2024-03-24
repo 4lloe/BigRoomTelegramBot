@@ -12,7 +12,7 @@
     "marketer_btn" : "Marketer",
     "programmer_btn" : "Programmer",
     "trader_btn" : "Trader",
-    "settings_text" : "In the settings you can change:\n\n1.Enable/Disable voice responses\n2.Select the creativity of the neural network’s responses\n3.Select interface language",
+    "settings_text" : "In the settings you can change:\n\n1.Select interface language",
     "something_wrong" : "Something wrong, try again"
 }
 

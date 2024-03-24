@@ -1,18 +1,20 @@
 import config
+
+# Методы для получения описания модели Маркетолога
 def marketer_model_description(lang_code):
     descriptions = {
         'en': "📝 Marketer Model:\n"
-              "Step 1: Choose the model 📈\n"
+              "Step 1: Conduct audience analysis 🎯\n"
               "Step 2: Ask about marketing trends and audience behavior 🎯\n"
               "Step 3: Get insights for creating effective advertising strategies with the latest data! 💡",
 
         'ru': "📝 Модель Маркетолога:\n"
-              "Шаг 1: Выберите модель 📈\n"
+              "Шаг 1: Проведите анализ целевой аудитории 🎯\n"
               "Шаг 2: Задайте вопрос о трендах в маркетинге и поведении аудитории 🎯\n"
               "Шаг 3: Получите инсайты для создания эффективных рекламных стратегий с учетом самых свежих данных! 💡",
 
         'ua': "📝 Модель Маркетолога:\n"
-              "Крок 1: Оберіть модель 📈\n"
+              "Крок 1: Проведіть аналіз цільової аудиторії 🎯\n"
               "Крок 2: Запитайте про тренди в маркетингу та поведінку аудиторії 🎯\n"
               "Крок 3: Отримайте інсайти для створення ефективних рекламних стратегій з урахуванням найсвіжіших даних! 💡"
     }
@@ -60,7 +62,7 @@ def trader_model_description(lang_code):
     }
     return descriptions[lang_code]
 
-
+# Методы для получения аккаунта пользователя
 def show_account(user_id):
     user_lang = config.user_state[user_id]["language"]
     subscribe_type = config.user_state[user_id].get('subscribe_type', 'Free')
@@ -106,7 +108,7 @@ def show_account(user_id):
         # Если язык не установлен, показываем клавиатуру для выбора языка
         config.show_keyboard(user_id, "something wrong,try later")
 
-
+# Методы для получения информации о доступных подписках
 def subscribe_text(message):
     user_id = message.from_user.id
     user_lang = config.user_state[user_id]['language']
@@ -180,16 +182,16 @@ def subscribe_text(message):
                                            "Достроковий доступ до бета-версій нових продуктів та нейронних мереж."))
                                  .replace("These subscriptions are designed for those who aim to",
                                           "Ці підписки призначені для тих, хто прагне"))
-        .replace(
-            "and ensure efficient interaction with artificial intelligence on the Telegram platform.",
-            "та забезпечити ефективну взаємодію з штучним інтелектом на платформі Telegram."))
+                                .replace("and ensure efficient interaction with artificial intelligence on the"
+                                         " Telegram platform.", "та забезпечити ефективну взаємодію з штучним "
+                                                                "інтелектом на платформі Telegram."))
         config.bot.send_message(user_id, subscribe_message_ua, reply_markup=config.get_subscribe_inline_keyboard(user_id))
     else:
         user_lang = config.user_state[user_id]['language']
         call = config.get_translation(user_lang, "something_wrong")
         config.show_keyboard(user_id, call)
 
-
+# Методы для получения первого сообщения при инициации диалога
 def show_bot_preview(user_lang):
     subscribe_message_template = (
         "🚀 Welcome to the world of advanced text models - your helpers in work and learning:\n\n"
@@ -234,7 +236,7 @@ def show_bot_preview(user_lang):
     else:
         return subscribe_message_template
 
-
+# Методы для получения описания моделей
 def model_description(message):
     user_id = message.from_user.id
     user_lang = config.user_state[user_id]['language']
@@ -316,3 +318,5 @@ def model_description(message):
         user_lang = config.user_state[user_id]['language']
         call = config.get_translation(user_lang, "something_wrong")
         config.show_keyboard(user_id, call)
+
+
