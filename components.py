@@ -2,19 +2,12 @@ import json
 import telebot
 import datetime
 import anthropic
-import interactions
+from utils.config import telegrambot_token, api_key, LOCALES_DIR, bot
 from telebot import types
-
-telegrambot_token = "6981720034:AAFpPGkTreAt_WzUw65mPIxgMzdk4KJ2gV4"
-api_key = "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"
-anthropic.api_key = api_key
-LOCALES_DIR = 'locales/'
-bot = telebot.TeleBot(telegrambot_token)
 
 # !!!Заменить на БД
 # Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
 user_state = {}
-
 
 
 def user_init(user_id):  # Первая инициализация подписки FREE
@@ -24,7 +17,7 @@ def user_init(user_id):  # Первая инициализация подпис�
             'language': None,  # Установка языка по умолчанию, если необходимо
             'subscribe_type': 'Free',  # Установка начального типа подписки
             'valid_until': datetime.date(2024, 3, 19),  # Примерная дата окончания подписки
-            'current_model': 'Default Model',  # Текущая модель
+            'current_model': None,  # Текущая модель
             'haiku_req': 0,  # Счётчик запросов хайку
             'sonnet_req': 0,  # Счётчик запросов соннетов
             'gptTurbo_req': 0,  # Счетчик запросов GPT-Turbo
@@ -185,6 +178,7 @@ def get_language_inline_k(user_id):
     markup.add(types.InlineKeyboardButton('Russian', callback_data='lang_ru'))
     markup.add(types.InlineKeyboardButton('Ukrainian', callback_data='lang_ua'))
     bot.send_message(user_id, 'Choose language:', reply_markup=markup)
+
+
 def choose_language(user_id):
     get_language_inline_k(user_id)
-
