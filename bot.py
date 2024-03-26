@@ -2,7 +2,7 @@ import components
 import interactions
 from telebot import types
 
-from utils.anthropic_utils import make_user_prompt
+import utils.anthropic_util, utils.config
 from utils.config import bot
 
 
@@ -108,7 +108,12 @@ def handle_message(message):
         elif message.text == allow_models_text:
             interactions.model_description(message)
         else:
-            make_user_prompt(message)
+            if user_lang == "en":
+                utils.anthropic_2.make_user_prompt_en(message)
+            elif user_lang == "ua":
+                utils.anthropic_2.make_user_prompt_ua(message)
+            elif user_lang == "ru":
+                utils.anthropic_2.make_user_prompt_ru(message)
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
@@ -150,8 +155,10 @@ def subscribe_callback(call):
 def marketer_callback(call):
     user_id = call.from_user.id
     user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+    components.user_state[user_id]['current_model'] = 'marketer'
     description = interactions.marketer_model_description(user_lang)
     bot.send_message(user_id, description)
+
 
 
 # Функция ответа на нажатие кнопки Модели->Програмист
@@ -159,6 +166,7 @@ def marketer_callback(call):
 def programmer_callback(call):
     user_id = call.from_user.id
     user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+    components.user_state[user_id]['current_model'] = 'programmer'
     description = interactions.programmer_model_description(user_lang)
     bot.send_message(user_id, description)
 
@@ -168,6 +176,7 @@ def programmer_callback(call):
 def trader_callback(call):
     user_id = call.from_user.id
     user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+    components.user_state[user_id]['current_model'] = 'trader'
     description = interactions.trader_model_description(user_lang)
     bot.send_message(user_id, description)
 
