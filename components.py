@@ -2,8 +2,6 @@ import json
 import datetime
 from utils.config import telegrambot_token, api_key, LOCALES_DIR, bot
 from telebot import types
-import fitz
-from docx import Document
 
 # !!!Заменить на БД
 # Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
@@ -183,25 +181,3 @@ def get_language_inline_k(user_id):
 def choose_language(user_id):
     get_language_inline_k(user_id)
 
-
-def extract_text_from_pdf(pdf_path):
-    doc = fitz.open(pdf_path)
-    text = ''
-    for page in doc:
-        text += page.get_text()
-    doc.close()
-    return text
-
-
-def extract_text_from_docx(docx_path):
-    doc = Document(docx_path)
-    text = ''
-    for para in doc.paragraphs:
-        text += para.text + 'n'
-    return text
-
-
-def extract_text_from_txt(txt_path):
-    with open(txt_path, 'r') as file:
-        text = file.read()
-    return text

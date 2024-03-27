@@ -1,14 +1,9 @@
 import components
 import interactions
-import base64
 import utils.anthropic_util, utils.config
 
 from utils.config import bot
 from telebot import types
-
-from PIL import Image
-import base64
-import io
 
 
 
