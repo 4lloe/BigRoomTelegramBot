@@ -1,9 +1,9 @@
 import json
-import telebot
 import datetime
-import anthropic
 from utils.config import telegrambot_token, api_key, LOCALES_DIR, bot
 from telebot import types
+import fitz
+from docx import Document
 
 # !!!Заменить на БД
 # Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
@@ -15,7 +15,7 @@ def user_init(user_id):  # Первая инициализация подпис�
         user_state[user_id] = {
             'started': True,
             'language': None,  # Установка языка по умолчанию, если необходимо
-            'subscribe_type': 'claude-2.1',  # Установка начального типа подписки
+            'subscribe_type': 'claude-3-haiku-20240307',  # Установка начального типа подписки
             'valid_until': datetime.date(2024, 3, 19),  # Примерная дата окончания подписки
             'current_model': None,  # Текущая модель
             'haiku_req': 3,  # Счётчик запросов хайку
@@ -182,3 +182,26 @@ def get_language_inline_k(user_id):
 
 def choose_language(user_id):
     get_language_inline_k(user_id)
+
+
+def extract_text_from_pdf(pdf_path):
+    doc = fitz.open(pdf_path)
+    text = ''
+    for page in doc:
+        text += page.get_text()
+    doc.close()
+    return text
+
+
+def extract_text_from_docx(docx_path):
+    doc = Document(docx_path)
+    text = ''
+    for para in doc.paragraphs:
+        text += para.text + 'n'
+    return text
+
+
+def extract_text_from_txt(txt_path):
+    with open(txt_path, 'r') as file:
+        text = file.read()
+    return text

@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="Updating the query file, limiting free queries and tuning to the user model">
-      <change afterPath="$PROJECT_DIR$/utils/anthropic_util.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components.py" beforeDir="false" afterPath="$PROJECT_DIR$/components.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locales/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/ru.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locales/ua.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/ua.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/anthropic_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/anthropic_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/anthropic_util.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +131,9 @@
       <workItem from="1711285229458" duration="15730000" />
       <workItem from="1711358167564" duration="22000" />
       <workItem from="1711363594397" duration="13106000" />
-      <workItem from="1711452080280" duration="11561000" />
+      <workItem from="1711452080280" duration="16122000" />
+      <workItem from="1711475393356" duration="162000" />
+      <workItem from="1711538794125" duration="12249000" />
     </task>
     <task id="LOCAL-00001" summary="bot creation">
       <option name="closed" value="true" />
@@ -233,7 +231,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711465224826</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Updating the query file, limiting free queries and tuning to the user model">
+      <option name="closed" value="true" />
+      <created>1711465357113</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1711465357113</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -264,6 +270,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BigRoomTelegramBot$main.coverage" NAME="main Coverage Results" MODIFIED="1711299013443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1711464690703" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1711551954032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

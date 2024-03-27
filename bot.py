@@ -1,9 +1,15 @@
 import components
 import interactions
+import base64
+import utils.anthropic_util, utils.config
+
+from utils.config import bot
 from telebot import types
 
-import utils.anthropic_util, utils.config
-from utils.config import bot
+from PIL import Image
+import base64
+import io
+
 
 
 # Функция реализующая отклик на команду /start вступительной коанды
@@ -50,6 +56,15 @@ def show_subscribe(message):
     user_id = message.from_user.id
     user_lang = components.user_state[user_id]['language']
     interactions.subscribe_text(message)
+
+@bot.message_handler(content_types=['photo'])
+def handle_photo(message):
+    utils.anthropic_util.user_image_prompt(message)
+
+
+@bot.message_handler(content_types=['document'])
+def handle_docs(message):
+    utils.anthropic_util.user_document_prompt(message)
 
 
 # Функция реализующая отклик команды смены языка
@@ -109,11 +124,11 @@ def handle_message(message):
             interactions.model_description(message)
         else:
             if user_lang == "en":
-                utils.anthropic_2.make_user_prompt_en(message)
+                utils.anthropic_util.make_user_prompt_en(message)
             elif user_lang == "ua":
-                utils.anthropic_2.make_user_prompt_ua(message)
+                utils.anthropic_util.make_user_prompt_ua(message)
             elif user_lang == "ru":
-                utils.anthropic_2.make_user_prompt_ru(message)
+                utils.anthropic_util.make_user_prompt_ru(message)
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
