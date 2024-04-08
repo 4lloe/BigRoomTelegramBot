@@ -2,6 +2,8 @@ import json
 import datetime
 from utils.config import telegrambot_token, api_key, LOCALES_DIR, bot
 from telebot import types
+import io
+import os
 
 # !!!Заменить на БД
 # Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
@@ -158,13 +160,14 @@ def get_preview_inline_keyboard(user_id):
     marketer = get_translation(user_lang, 'marketer_btn')
     programmer = get_translation(user_lang, 'programmer_btn')
     trader = get_translation(user_lang, 'trader_btn')
-    close_btn = get_translation(user_lang, "close_btn")
+    clean_chat = get_translation(user_lang, 'clean_chat_msg')
     subscribe = get_translation(user_lang, 'tariffs_btn')
 
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text="📝 " + marketer, callback_data='marketer_callback'))
     markup.add(types.InlineKeyboardButton(text="💻 " + programmer, callback_data='programmer_callback'))
     markup.add(types.InlineKeyboardButton(text="💹 " + trader, callback_data='trader_callback'))
+    markup.add(types.InlineKeyboardButton(text="💬" + clean_chat, callback_data='clean_chat'))
     markup.add(types.InlineKeyboardButton(text="🚀 " + subscribe, callback_data='subscribe_callback'))
 
     return markup
@@ -180,4 +183,80 @@ def get_language_inline_k(user_id):
 
 def choose_language(user_id):
     get_language_inline_k(user_id)
+
+
+def download_and_convert_document(file_id, message):
+    file_info = bot.get_file(file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    file_size = file_info.file_size
+
+    # Проверяем размер файла, не больше ли он 10 МБ
+    if file_size > 10 * 1024 * 1024:
+        bot.send_message(message.chat.id, "Файл слишком большой, братишка. Давай что-нибудь поменьше.")
+        return
+
+    # Сохраняем файл локально
+    with open('temp_file.pdf', 'wb') as new_file:
+        new_file.write(downloaded_file)
+
+    # Конвертируем PDF в текст
+    text = convert_to_text('temp_file.pdf')
+
+    # Теперь можно использовать текст как угодно...
+    # Например, отправить его обратно пользователю или передать в другую функцию
+    bot.send_message(message.chat.id, text)
+
+    # Удаляем файл
+    os.remove('temp_file.pdf')
+
+def download_and_convert_document(file_id, message):
+    file_info = bot.get_file(file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    file_size = file_info.file_size
+
+    # Проверяем размер файла, не больше ли он 10 МБ
+    if file_size > 10 * 1024 * 1024:
+        bot.send_message(message.chat.id, "Файл слишком большой, братишка. Давай что-нибудь поменьше.")
+        return
+
+    # Сохраняем файл локально
+    with open('temp_file.pdf', 'wb') as new_file:
+        new_file.write(downloaded_file)
+
+    # Конвертируем PDF в текст
+    text = convert_to_text('temp_file.pdf')
+
+    # Теперь можно использовать текст как угодно...
+    # Например, отправить его обратно пользователю или передать в другую функцию
+    bot.send_message(message.chat.id, text)
+
+    # Удаляем файл
+    os.remove('temp_file.pdf')
+
+def convert_to_text(inputPDF):
+    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+    from pdfminer.pdfpage import PDFPage
+    from pdfminer.converter import TextConverter
+    from pdfminer.layout import LAParams
+    import io
+
+    # PDFResourceManager используется для хранения ресурсов, таких как шрифты и изображения
+    res_mgr = PDFResourceManager()
+    ret_data = io.StringIO()
+    txt_converter = TextConverter(res_mgr, ret_data, laparams=LAParams())
+    interpreter = PDFPageInterpreter(res_mgr, txt_converter)
+
+    # Открываем файл
+    with open(inputPDF, 'rb') as in_file:
+        for page in PDFPage.get_pages(in_file, caching=True):
+            interpreter.process_page(page)
+
+    text = ret_data.getvalue()
+
+    # Закрываем конвертер и возвращаем полученный текст
+    txt_converter.close()
+    ret_data.close()
+    return text
+
+
 

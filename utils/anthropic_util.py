@@ -325,44 +325,20 @@ def user_image_prompt(message):
         bot.send_message(message.chat.id, "You have not subscribe to use images")
 
 
-def user_document_prompt(message):
-    file_info = bot.get_file(message.document.file_id)
-    file_path = file_info.file_path
-    downloaded_file = bot.download_file(file_path)
-
-    file_mime_type = message.document.mime_type
-    file_base64 = base64.b64encode(downloaded_file).decode('utf-8')
-
-
+def user_document_prompt(text, message):
     user_id = message.from_user.id
-    prompt = json.dumps({'message': message.text})
     model = user_state[user_id]['subscribe_type']
+    prompt = json.dumps({'message': message.text})
 
     if model != "Free":
         response = client.messages.create(
-            model=model,
+            model='claude-2.1',
             max_tokens=1024,
             system="If the question is asked in Russian, you must answer in Russian; if the question is asked in "
                    "Ukrainian, you must answer in Ukrainian; if the question is asked in English, you must answer "
-                   "in English.",
+                   "in English. Question to you is next:" + prompt,
             messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "source": {
-                                "type": "base64",
-                                "media_type": file_mime_type,
-                                "data": file_base64,
-                            },
-                        },
-                        {
-                            "type": "text",
-                            "text": message.caption
-                        }
-            ],
-                }
+                {"role": "user", "content": text}
             ]
         )
         text = ""

@@ -14,6 +14,7 @@
     "trader_btn" : "Trader",
     "settings_text" : "In the settings you can change:\n\n1.Select interface language",
     "something_wrong" : "Something wrong, try again",
-    "lose_tokens_msg" : "You have spent all your tokens, subscribe to continue using the chat"
+    "lose_tokens_msg" : "You have spent all your tokens, subscribe to continue using the chat",
+    "clean_chat_msg": "clean chat"
 }
 

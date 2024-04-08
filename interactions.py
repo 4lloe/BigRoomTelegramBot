@@ -194,48 +194,66 @@ def subscribe_text(message):
 
 # Методы для получения первого сообщения при инициации диалога
 def show_bot_preview(user_lang):
-    subscribe_message_template = (
-        "🚀 Welcome to the world of advanced text models - your helpers in work and learning:\n\n"
-        "📝 Marketing Model:\n"
-        "Specially designed for marketing professionals, provides you with up-to-date information on market trends "
-        "and consumer behavior. It's not just a tool, it's your guide in the world of marketing campaigns, helping "
-        "you create targeted advertising strategies based on the freshest data!\n\n"
-        "💻 Programmer Model:\n"
-        "Adapted specifically for developers and programmers, generates not only code snippets but also offers "
-        "effective solutions for the most complex tasks. This model is not limited to one programming language, "
-        "making it an indispensable tool at all stages of development!\n\n"
-        "💹 Trader Model:\n"
-        "Perfect for traders and investors, provides accurate forecasts on stock prices and market trends. With its "
-        "analysis of financial data and risk assessment, this model will help you make informed decisions and achieve "
-        "your financial goals!\n\n"
-        "So don't miss the opportunity to take your professionalism to the next level in your field with our "
-        "advanced text models! 🚀📈🔝"
-    )
+    # Создаем словарь с шаблонами для каждого языка
+    templates = {
+        'en': (
+            "🚀 Welcome to the world of advanced text models - your helpers in work and learning:\n\n"
+            "📝 Marketing Model:\n"
+            "Specially designed for marketing professionals, provides you with up-to-date information on market trends "
+            "and consumer behavior. It's not just a tool, it's your guide in the world of marketing campaigns, helping "
+            "you create targeted advertising strategies based on the freshest data!\n\n"
+            "💻 Programmer Model:\n"
+            "Adapted specifically for developers and programmers, generates not only code snippets but also offers "
+            "effective solutions for the most complex tasks. This model is not limited to one programming language, "
+            "making it an indispensable tool at all stages of development!\n\n"
+            "💹 Trader Model:\n"
+            "Perfect for traders and investors, provides accurate forecasts on stock prices and market trends. With its "
+            "analysis of financial data and risk assessment, this model will help you make informed decisions and achieve "
+            "your financial goals!\n\n"
+            "So don't miss the opportunity to take your professionalism to the next level in your field with our "
+            "advanced text models! 🚀📈🔝"
+        ),
+        'ru': (
+            "🚀 Добро пожаловать в мир передовых текстовых моделей - ваши помощники в работе и учёбе:\n\n"
+            "📝 Маркетинговая модель:\n"
+            "Специально разработанная для маркетологов, предоставляет вам актуальную информацию о тенденциях рынка "
+            "и поведении потребителей. Это не просто инструмент, это ваш гид в мире маркетинговых кампаний, помогающий "
+            "вам создавать целевые рекламные стратегии на основе самых свежих данных!\n\n"
+            "💻 Программистская модель:\n"
+            "Адаптирована специально для разработчиков и программистов, генерирует не только фрагменты кода, но также "
+            "предлагает эффективные решения для самых сложных задач. Эта модель не ограничивается одним языком "
+            "программирования, что делает ее незаменимым инструментом на всех этапах разработки!\n\n"
+            "💹 Трейдерская модель:\n"
+            "Идеально подходит для трейдеров и инвесторов, предоставляет точные прогнозы по ценам на акции и тенденциям "
+            "рынка. С ее анализом финансовых данных и оценкой рисков эта модель поможет вам принимать обоснованные решения "
+            "и достигать ваших финансовых целей!\n\n"
+            "Так что, не упустите возможность выйти на новый уровень профессионализма в своей области с "
+            "нашими передовыми текстовыми моделями! 🚀📈🔝"
+        ),
+        'ua': (
+            "🚀 Ласкаво просимо до світу передових текстових моделей - ваші помічники в роботі та навчанні:\n\n"
+            "📝 Маркетингова модель:\n"
+            "Спеціально розроблена для маркетологів, надає вам актуальну інформацію про тенденції ринку "
+            "і поведінку споживачів. Це не просто інструмент, це ваш гід у світі маркетингових кампаній, який "
+            "допомагає вам створювати цільові рекламні стратегії на основі найсвіжіших даних!\n\n"
+            "💻 Програмістська модель:\n"
+            "Адаптована спеціально для розробників і програмістів, генерує не лише фрагменти коду, але також "
+            "пропонує ефективні рішення для найскладніших завдань. Ця модель не обмежується однією мовою "
+            "програмування, що робить її незамінним інструментом на всіх етапах розробки!\n\n"
+            "💹 Трейдерська модель:\n"
+            "Ідеально підходить для трейдерів і інвесторів, надає точні прогнози по цінах на акції та тенденціям "
+            "ринку. З її аналізом фінансових даних та оцінкою ризиків ця модель допоможе вам приймати обґрунтовані рішення "
+            "і досягати ваших фінансових цілей!\n\n"
+            "Так що, не пропустіть можливість вийти на новий рівень професіоналізму в своїй галузі з нашими "
+            "передовими текстовими моделями! 🚀📈🔝"
+        )
+    }
 
-    if user_lang == 'en':
-        return subscribe_message_template
-    elif user_lang == 'ru':
-        subscribe_message = subscribe_message_template.replace(
-            "🚀 Welcome to the world of advanced text models - your helpers in work and learning:",
-            "🚀 Добро пожаловать в мир передовых текстовых моделей - ваши помощники в работе и учёбе:"
-        ).replace("So don't miss the opportunity to take your professionalism to the next level in your field with our "
-                  "advanced text models! 🚀📈🔝",
-                  "Так что, не упустите возможность выйти на новый уровень профессионализма в своей области с "
-                  "нашими передовыми текстовыми моделями! 🚀📈🔝"
-                  )
-        return subscribe_message
-    elif user_lang == 'ua':
-        subscribe_message_ua = subscribe_message_template.replace(
-            "🚀 Welcome to the world of advanced text models - your helpers in work and learning:",
-            "🚀 Ласкаво просимо до світу передових текстових моделей - ваші помічники в роботі та навчанні:"
-        ).replace("So don't miss the opportunity to take your professionalism to the next level in your field with our "
-                  "advanced text models! 🚀📈🔝",
-                  "Так що, не пропустіть можливість вийти на новий рівень професіоналізму в своїй галузі з нашими "
-                  "передовими текстовими моделями! 🚀📈🔝"
-                  )
-        return subscribe_message_ua
-    else:
-        return subscribe_message_template
+    # Возврат сообщения на запрошенном языке, а если нет такового - на английском
+    return templates.get(user_lang, templates['en'])
+
+# Теперь вызов этой функции с аргументом языка пользователя вернет сообщение на соответствующем языке
+
 
 # Методы для получения описания моделей
 def model_description(message):

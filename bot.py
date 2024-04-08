@@ -1,6 +1,8 @@
 import components
 import interactions
 import utils.anthropic_util, utils.config
+import os
+
 
 from utils.config import bot
 from telebot import types
@@ -59,7 +61,37 @@ def handle_photo(message):
 
 @bot.message_handler(content_types=['document'])
 def handle_docs(message):
-    utils.anthropic_util.user_document_prompt(message)
+    user_id = message.from_user.id
+    user_lang = components.user_state[user_id]['language']
+    file_info = bot.get_file(message.document.file_id)
+
+    # Проверяем размер файла
+    if file_info.file_size > 10 * 1024 * 1024:  # Больше 10 МБ
+        bot.reply_to(message, "Файл слишком большой, браток. Попробуй что-нибудь поменьше.")
+        return
+
+    # Скачиваем файл
+    file_path = bot.download_file(file_info.file_path)
+    temp_file_path = f'temp_files/{file_info.file_id}.pdf'
+
+    # Сохраняем файл локально
+    with open(temp_file_path, 'wb') as file:
+        file.write(file_path)
+
+    # Конвертируем PDF в текст
+    text = components.convert_to_text(temp_file_path)
+
+    # После использования текста для чего-либо, например, для отправки пользователю
+    if user_lang == 'en':
+        utils.anthropic_util.user_document_prompt(text, message)
+    elif user_lang == 'ru':
+        utils.anthropic_util.user_document_prompt(text, message)
+    elif user_lang == 'ua':
+        utils.anthropic_util.user_document_prompt(text, message)
+
+    # Удаляем файл
+    os.remove(temp_file_path)
+
 
 
 # Функция реализующая отклик команды смены языка
@@ -189,6 +221,21 @@ def trader_callback(call):
     components.user_state[user_id]['current_model'] = 'trader'
     description = interactions.trader_model_description(user_lang)
     bot.send_message(user_id, description)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'clean_chat')
+def programmer_callback(call):
+    user_id = call.from_user.id
+    user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
+
+    if user_lang == 'en':
+        bot.send_message(user_id,
+                         "Your chat with the bot has started! ✨ Enter your message on the keyboard -> send it -> receive a response.")
+    elif user_lang == 'ua':
+        bot.send_message(user_id,
+                         "Ваш чат з ботом розпочато! ✨ Введіть повідомлення на клавіатурі -> надішліть його -> отримайте відповідь.")
+    elif user_lang == 'ru':
+        bot.send_message(user_id,
+                         "Ваш чат с ботом начался! ✨ Введите сообщение на клавиатуре -> отправьте -> получите ответ.")
 
 
 bot.infinity_polling()
