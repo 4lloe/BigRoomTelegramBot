@@ -157,12 +157,7 @@ def handle_message(message):
         elif message.text == allow_models_text:
             interactions.model_description(message)
         else:
-            if user_lang == "en":
-                utils.anthropic_util.make_user_prompt_en(message)
-            elif user_lang == "ua":
-                utils.anthropic_util.make_user_prompt_ua(message)
-            elif user_lang == "ru":
-                utils.anthropic_util.make_user_prompt_ru(message)
+            utils.anthropic_util.make_user_prompt(message)
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
