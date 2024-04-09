@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="File to prompt serializer update">
+    <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="GUI update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components.py" beforeDir="false" afterPath="$PROJECT_DIR$/components.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interactions.py" beforeDir="false" afterPath="$PROJECT_DIR$/interactions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locales/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/ru.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locales/ua.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/ua.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/anthropic_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/anthropic_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +146,7 @@
       <workItem from="1712523454742" duration="764000" />
       <workItem from="1712576995857" duration="8898000" />
       <workItem from="1712605414202" duration="1428000" />
-      <workItem from="1712653989302" duration="11231000" />
+      <workItem from="1712653989302" duration="13761000" />
     </task>
     <task id="LOCAL-00001" summary="bot creation">
       <option name="closed" value="true" />
@@ -282,7 +276,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712594878830</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="GUI update">
+      <option name="closed" value="true" />
+      <created>1712685007902</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1712685007902</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -312,10 +314,11 @@
     <MESSAGE value="Image analyze up6+date" />
     <MESSAGE value="Image analyze update" />
     <MESSAGE value="File to prompt serializer update" />
-    <option name="LAST_COMMIT_MESSAGE" value="File to prompt serializer update" />
+    <MESSAGE value="GUI update" />
+    <option name="LAST_COMMIT_MESSAGE" value="GUI update" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BigRoomTelegramBot$main.coverage" NAME="main Coverage Results" MODIFIED="1711299013443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1712684577066" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1712691781777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
