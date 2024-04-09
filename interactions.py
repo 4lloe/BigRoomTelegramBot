@@ -339,3 +339,37 @@ def model_description(message):
         components.show_keyboard(user_id, call)
 
 
+def shot_settings_interation(message):
+    user_id = message.from_user.id
+    user_lang = components.user_state[user_id]['language']
+    if user_lang == "ua":
+        settings_message = ("⚙️ У цьому розділі ви можете змінити налаштування:\n"
+                            "1. Вибрати модель GPT & Claude.\n"
+                            "2. Вибрати роль для ChatGPT.\n"
+                            "3. Вибрати рівень креативності відповідей бота.\n"
+                            "4. Увімкнути або вимкнути підтримку контексту. Коли контекст увімкнено, бот бере до уваги "
+                            "свою попередню відповідь для ведення діалогу.\n"
+                            "5. Налаштувати голосові відповіді та вибрати голос GPT (доступний у /premium).\n"
+                            "6. Вибрати мову інтерфейсу.")
+    elif user_lang == "en":
+        settings_message = ("⚙️ In this section, you can adjust settings:\n"
+                            "1. Choose GPT & Claude model.\n"
+                            "2. Select a role for ChatGPT.\n"
+                            "3. Choose the level of creativity for bot responses.\n"
+                            "4. Enable or disable context support. When context is enabled, the bot takes into "
+                            "account its previous response for dialogue management.\n"
+                            "5. Configure voice responses and select a GPT voice (available in /premium).\n"
+                            "6. Select interface language.")
+
+    elif user_lang == "ru":
+        settings_message = ("⚙️ В этом разделе вы можете изменить настройки:\n"
+                            "1. Выбрать модель GPT & Claude.\n"
+                            "2. Выбрать роль для ChatGPT.\n"
+                            "3. Выбрать уровень креативности ответов бота.\n"
+                            "4. Включить или отключить поддержку контекста. Когда контекст включен, бот учитывает свой "
+                            "предыдущий ответ для ведения диалога.\n"
+                            "5. Настроить голосовые ответы и выбрать голос GPT (доступен в /premium).\n"
+                            "6. Выбрать язык интерфейса.")
+
+    return settings_message
+

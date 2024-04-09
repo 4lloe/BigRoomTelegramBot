@@ -1,6 +1,5 @@
 {
     "welcome_message": "Привет, я бот Big Room я предназначен для помощи тебе в твоей работе!",
-    "language_selected": "Русский язык выбран!",
     "account_btn" : "Акаунт",
     "settings_btn" : "Настройки",
     "tariffs_btn" : "Подписка",
@@ -16,6 +15,7 @@
     "something_wrong" : "Что-то не так, попробуйте еще раз",
     "lose_tokens_msg" : "Ты потратил все свои токены, оформи подписку чтобы продолжить пользоваться чатом",
     "nosubscribe_error" : "",
-    "clean_chat_msg": "Чистый чат"
+    "clean_chat_msg": "Чистый чат",
+    "choose_model_settings_text" : "Выбрать роль для искуственного интелекта"
 }
 

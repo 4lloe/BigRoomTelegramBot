@@ -97,12 +97,12 @@ def get_account_inline_keyboard(user_id):
 def get_settings_inline_keyboard(user_id):
     user_lang = user_state[user_id]['language']
 
-    voice_text = get_translation(user_lang, "sb_voice_answers_btn")
-    creativity_text = get_translation(user_lang, "sb_answers_creativity_btn")
     language_change_text = get_translation(user_lang, "sb_language_change_btn")
+    choose_models_text = get_translation(user_lang, "choose_model_settings_text")
     close_text = get_translation(user_lang, "close_btn")
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text="🇺🇦" + language_change_text, callback_data='language_settings'))
+    markup.add(types.InlineKeyboardButton(text="👾" + choose_models_text, callback_data='models_settings'))
     markup.add(types.InlineKeyboardButton(text=close_text, callback_data='close_callback'))
 
     return markup
@@ -209,29 +209,6 @@ def download_and_convert_document(file_id, message):
     # Удаляем файл
     os.remove('temp_file.pdf')
 
-def download_and_convert_document(file_id, message):
-    file_info = bot.get_file(file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    file_size = file_info.file_size
-
-    # Проверяем размер файла, не больше ли он 10 МБ
-    if file_size > 10 * 1024 * 1024:
-        bot.send_message(message.chat.id, "Файл слишком большой, братишка. Давай что-нибудь поменьше.")
-        return
-
-    # Сохраняем файл локально
-    with open('temp_file.pdf', 'wb') as new_file:
-        new_file.write(downloaded_file)
-
-    # Конвертируем PDF в текст
-    text = convert_to_text('temp_file.pdf')
-
-    # Теперь можно использовать текст как угодно...
-    # Например, отправить его обратно пользователю или передать в другую функцию
-    bot.send_message(message.chat.id, text)
-
-    # Удаляем файл
-    os.remove('temp_file.pdf')
 
 def convert_to_text(inputPDF):
     from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -259,4 +236,5 @@ def convert_to_text(inputPDF):
     return text
 
 
-
+def send_error_message(message):
+    bot.send_message(message.chat.id, "Something wrong")

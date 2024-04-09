@@ -21,10 +21,8 @@ def start_command(message):
         if not user_lang:
             change_language(message)
         else:
-            welcome_message = components.get_translation(user_lang, "welcome_message")
-            components.show_keyboard(user_id, welcome_message)
-            bot.send_message(user_id, interactions.show_bot_preview(user_lang),
-                             reply_markup=components.get_preview_inline_keyboard(user_id))
+            models_command(message)
+
 
 
 # Функция реализующая отклик на команду /language для установки языка пользователя
@@ -43,8 +41,7 @@ def change_language(message):
 def show_settings(message):
     user_id = message.from_user.id
     user_lang = components.user_state[user_id]['language']
-    settings_text = "⚙️" + components.get_translation(user_lang, "settings_text")
-    bot.send_message(user_id, settings_text, reply_markup=components.get_settings_inline_keyboard(user_id))
+    bot.send_message(user_id, interactions.shot_settings_interation(message), reply_markup=components.get_settings_inline_keyboard(user_id))
 
 
 # Функция реализующая отклик на команду /subscribe для вывода доступных тарифов
@@ -53,6 +50,16 @@ def show_subscribe(message):
     user_id = message.from_user.id
     user_lang = components.user_state[user_id]['language']
     interactions.subscribe_text(message)
+
+@bot.message_handler(commands=['models','hub'])
+def models_command(message):
+    user_id = message.from_user.id
+    user_lang = components.user_state[user_id].get('language') if user_id in components.user_state \
+        else components.send_error_message(message)
+    welcome_message = components.get_translation(user_lang, "welcome_message")
+    components.show_keyboard(user_id, welcome_message)
+    bot.send_message(user_id, interactions.show_bot_preview(user_lang),
+                     reply_markup=components.get_preview_inline_keyboard(user_id))
 
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
@@ -110,13 +117,13 @@ def set_language(call):
 
     if lang_code == 'en':
         bot.answer_callback_query(call.id, "English selected!")
-        language_selected = "🇬🇧" + components.get_translation(user_lang, "language_selected")
+        language_selected = "🇬🇧 English was selected!"
     elif lang_code == 'ru':
         bot.answer_callback_query(call.id, "Русский выбран!")
-        language_selected = "🇷🇺" + components.get_translation(user_lang, "language_selected")
+        language_selected = "🇷🇺 Русский язык выбран!"
     elif lang_code == 'ua':
         bot.answer_callback_query(call.id, "Українська вибрана!")
-        language_selected = "🇺🇦" + components.get_translation(user_lang, "language_selected")
+        language_selected = "🇺🇦 Українська мова встановлена!"
 
     if is_new_user:
         bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -166,6 +173,9 @@ def handle_message(message):
 def callback_settings(message):
     show_settings(message)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'models_settings')
+def models_call_handler(call):
+    models_command(call)
 
 # Функция ответа на нажатие кнопки Аккаунт->Подписка
 @bot.callback_query_handler(func=lambda call: call.data == 'buy_subscribe')
