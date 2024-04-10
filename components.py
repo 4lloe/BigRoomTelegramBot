@@ -3,11 +3,13 @@ import datetime
 from utils.config import telegrambot_token, api_key, LOCALES_DIR, bot
 from telebot import types
 import io
+import sys
 import os
 
 # !!!Заменить на БД
 # Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
 user_state = {}
+ai_messages_buffer = []
 
 
 def user_init(user_id):  # Первая инициализация подписки FREE
@@ -234,6 +236,21 @@ def convert_to_text(inputPDF):
     txt_converter.close()
     ret_data.close()
     return text
+
+
+def clear_dialog_if_too_large(ai_messages_buffer, max_size_mb=10):
+    size_in_bytes = sys.getsizeof(ai_messages_buffer)
+    size_in_mb = size_in_bytes / (1024 * 1024)
+
+    if size_in_mb > max_size_mb:
+        # Сохраняем последнее сообщение
+        last_message = ai_messages_buffer[-1]
+        # Очищаем диалог
+        ai_messages_buffer.clear()
+        # Добавляем последнее сообщение обратно в диалог
+        ai_messages_buffer.append(last_message)
+
+    return ai_messages_buffer
 
 
 def send_error_message(message):

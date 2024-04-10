@@ -3,7 +3,6 @@ import interactions
 import utils.anthropic_util, utils.config
 import os
 
-
 from utils.config import bot
 from telebot import types
 
