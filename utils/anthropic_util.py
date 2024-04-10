@@ -20,31 +20,25 @@ def make_user_prompt(message):
     model = user_state[user_id]['subscribe_type']
     if model == "Free":
         if user_state[user_id]['haiku_req'] > 0:
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "user", "content": prompt})
+
             response = client.messages.create(
                 model=model,
                 max_tokens=1024,
                 system="You must respond to the user's request in the language in which they ask you the question. "
                        "Messages like: “I don’t understand the language *” are not welcome.Available languages for use:"
                        " Ukrainian, English, Russian only!",
-                messages=[components.ai_messages_buffer]
+                messages=[{"role": "user", "content": prompt}]
             )
             text = ""
             for item in response.content:
                 text += item.text
             bot.send_message(message.chat.id, text)
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
             user_state[user_id]['haiku_req'] = user_state[user_id]['haiku_req'] - 1
         else:
             user_lang = user_state[user_id]['language']
-            bot.send_message(message.chat.id, components.get_translation(user_lang,"lose_tokens_msg"))
+            bot.send_message(message.chat.id, components.get_translation(user_lang, "lose_tokens_msg"))
     else:
         if user_state[user_id]["current_model"] == "marketer":
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "user", "content": prompt})
-
             response = client.messages.create(
                 model=model,
                 max_tokens=1024,
@@ -53,18 +47,13 @@ def make_user_prompt(message):
                        " Ukrainian, English, Russian only!"
                        "Try on the role of an experienced marketer, a person has come to you for a consultation,"
                        " to help him you must answer as professionally as possible and using marketing terminology.",
-                messages=[components.ai_messages_buffer]
+                messages=[{"role": "user", "content": prompt}]
             )
             text = ""
             for item in response.content:
                 text += item.text
             bot.send_message(message.chat.id, text)
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
         elif user_state[user_id]["current_model"] == "programmer":
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "user", "content": prompt})
-
             response = client.messages.create(
                 model=model,
                 max_tokens=1024,
@@ -75,18 +64,13 @@ def make_user_prompt(message):
                        "portfolio, you need to answer the user as many times as possible using code, you must solve "
                        "a problem or answer a question using code, also use narrow terminology to explain processes "
                        "and terms ",
-                messages=[components.ai_messages_buffer]
+                messages=[{"role": "user", "content": prompt}]
             )
             text = ""
             for item in response.content:
                 text += item.text
             bot.send_message(message.chat.id, text)
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
         elif user_state[user_id]["current_model"] == "trader":
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "user", "content": prompt})
-
             response = client.messages.create(
                 model=model,
                 max_tokens=1024,
@@ -96,31 +80,28 @@ def make_user_prompt(message):
                        "Put on the role of an experienced trader who has a wealth of experience and successful transactions."
                        " You should answer the user's question as professionally as possible using trading terminology, "
                        "and be able to give advice on trading and investments.",
-                messages=[components.ai_messages_buffer]
+                messages=[{"role": "user", "content": prompt}]
             )
             text = ""
             for item in response.content:
                 text += item.text
             bot.send_message(message.chat.id, text)
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
         else:
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "user", "content": prompt})
-
             response = client.messages.create(
                 model=model,
                 max_tokens=1024,
-                messages=[components.ai_messages_buffer]
+                messages=[{"role": "user", "content": prompt}]
             )
             text = ""
             for item in response.content:
                 text += item.text
             bot.send_message(message.chat.id, text)
-            components.clear_dialog_if_too_large(components.ai_messages_buffer)
-            components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
+
 
 def user_image_prompt(message):
+    user_id = message.from_user.id
+    user_lang = components.user_state[user_id]['language']
+
     file_info = bot.get_file(message.photo[-1].file_id)
     downloaded_file = bot.download_file(file_info.file_path)
 
@@ -131,27 +112,17 @@ def user_image_prompt(message):
     image_base64 = base64.b64encode(downloaded_file).decode('utf-8')
 
     user_id = message.from_user.id
-    prompt = json.dumps({'message': message.text})
-    model = user_state[user_id]['subscribe_type']
+    if message.caption:
+        prompt = message.caption
+    else:
+        if user_lang == "ru":
+            prompt = "Комментируй фото на русском языке"
+        elif user_lang == "ua":
+            prompt = "Коментуй фото украйнською"
+        elif user_lang == "en":
+            prompt = "Comment photo on english language"
 
-    components.clear_dialog_if_too_large(components.ai_messages_buffer)
-    components.ai_messages_buffer.insert(0, {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "image/"+format,
-                                "data": image_base64,
-                            },
-                        },
-                        {
-                            "type": "text",
-                            "text": message.caption
-                        }
-            ],
-                })
+    model = user_state[user_id]['subscribe_type']
 
     if model != "Free":
         response = client.messages.create(
@@ -168,15 +139,15 @@ def user_image_prompt(message):
                             "type": "image",
                             "source": {
                                 "type": "base64",
-                                "media_type": "image/"+format,
+                                "media_type": "image/" + format,
                                 "data": image_base64,
                             },
                         },
                         {
                             "type": "text",
-                            "text": message.caption
+                            "text": prompt
                         }
-            ],
+                    ],
                 }
             ]
         )
@@ -185,30 +156,36 @@ def user_image_prompt(message):
             text += item.text
         bot.send_message(message.chat.id, text)
 
-        components.clear_dialog_if_too_large(components.ai_messages_buffer)
-        components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
     else:
         bot.send_message(message.chat.id, "You have not subscribe to use images")
 
 
 def user_document_prompt(text, message):
     user_id = message.from_user.id
-    model = user_state[user_id]['subscribe_type']
-    prompt = json.dumps({'message': message.text})
+    user_lang = components.user_state[user_id]['language']
 
-    #провеяем на заполненость буфера истории
-    components.clear_dialog_if_too_large(components.ai_messages_buffer)
-    components.ai_messages_buffer.insert(0, {"role": "user", "content": message.caption})
+    user_id = message.from_user.id
+    model = user_state[user_id]['subscribe_type']
+
+    if message.caption:
+        prompt = message.caption
+    else:
+        if user_lang == "ru":
+            prompt = "Комментируй документ на русском языке"
+        elif user_lang == "ua":
+            prompt = "Коментуй документ украйнською"
+        elif user_lang == "en":
+            prompt = "Comment document on english language"
 
     if model != "Free":
         response = client.messages.create(
             model='claude-2.1',
             max_tokens=1024,
             system="You must respond to the user's request in the language in which they ask you the question. "
-                       "Messages like: “I don’t understand the language *” are not welcome.Available languages for use:"
-                       " Ukrainian, English, Russian only! Question to you is next:" + message.caption,
+                   "Messages like: “I don’t understand the language *” are not welcome.Available languages for use:"
+                   " Ukrainian, English, Russian only! Question to you is next:" + prompt,
             messages=[
-                components.ai_messages_buffer
+                {"role": "user", "content": text}
             ]
         )
         text = ""
@@ -216,7 +193,6 @@ def user_document_prompt(text, message):
             text += item.text
         bot.send_message(message.chat.id, text)
 
-        components.clear_dialog_if_too_large(components.ai_messages_buffer)
-        components.ai_messages_buffer.insert(0, {"role": "bot", "content": text})
+
     else:
         bot.send_message(message.chat.id, "You have not subscribe to use documents")
