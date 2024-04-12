@@ -15,7 +15,7 @@ client = anthropic.Anthropic(
 
 user_context = []
 
-def clear_buffer_if_too_large(ai_messages_buffer, max_size_mb=1000):
+def clear_buffer_if_too_large(ai_messages_buffer, max_size_mb=100):
     size_in_bytes = sys.getsizeof(ai_messages_buffer)
     size_in_mb = size_in_bytes / (1024 * 1024)
 
@@ -84,7 +84,7 @@ def anthropic_req(message, req_type, text = None):
                 system="You must respond to the user's request in the language in which they ask you the question. "
                         "Messages like: “I don’t understand the language *” are not welcome.Available languages for use:"
                         " Ukrainian, English, Russian only,that very important, only that three languages available to use"
-                        "Take on the role of an experienced consultant - "+ model +
+                        "Take on the role of an experienced consultant - " + model +
                        ", a person has approached you seeking guidance. To assist them effectively, you must respond "
                        "with professionalism, employing the relevant terminology for the respective field, whether"
                        " it be programming, trading, or any other, while maintaining the integrity of the consultation process.",
@@ -98,8 +98,6 @@ def anthropic_req(message, req_type, text = None):
             req_info = {"role": "assistant", "content": text, }
             # Добавляем словарь с информацией о запросе в список user_requests
             user_context.append(req_info)
-
-
     elif req_type == "image":
         file_info = bot.get_file(message.photo[-1].file_id)
         downloaded_file = bot.download_file(file_info.file_path)
@@ -139,17 +137,12 @@ def anthropic_req(message, req_type, text = None):
                        "in English."
                        "You must respond to the user's request in the language in which they ask you the question. "
                        "Messages like: “I don’t understand the language *” are not welcome.Available languages for use:"
-                       " Ukrainian, English, Russian only,that very important, only that three languages available to use"
-                       "Take on the role of an experienced consultant - " + model +
+                       "Ukrainian, English, Russian only,that very important, only that three languages available to "
+                       "use. Take on the role of an experienced consultant - " + model +
                        ", a person has approached you seeking guidance. To assist them effectively, you must respond "
                        "with professionalism, employing the relevant terminology for the respective field, whether"
                        " it be programming, trading, or any other, while maintaining the integrity of the consultation process.",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": user_context,
-                    }
-                ]
+                messages=user_context
             )
             text = ""
             for item in response.content:

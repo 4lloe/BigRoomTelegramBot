@@ -62,7 +62,7 @@ def models_command(message):
 
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
-    utils.anthropic_util.user_image_prompt(message)
+    utils.anthropic_reqests.anthropic_req(message, "image")
 
 
 @bot.message_handler(content_types=['document'])
@@ -88,12 +88,7 @@ def handle_docs(message):
     text = components.convert_to_text(temp_file_path)
 
     # После использования текста для чего-либо, например, для отправки пользователю
-    if user_lang == 'en':
-        utils.anthropic_util.user_document_prompt(text, message)
-    elif user_lang == 'ru':
-        utils.anthropic_util.user_document_prompt(text, message)
-    elif user_lang == 'ua':
-        utils.anthropic_util.user_document_prompt(text, message)
+    utils.anthropic_reqests.anthropic_req(message, "document", text)
 
     # Удаляем файл
     os.remove(temp_file_path)
