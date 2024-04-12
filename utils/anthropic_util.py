@@ -12,12 +12,12 @@ client = anthropic.Anthropic(
     api_key="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",
 )
 
-
 # добавить ограничения по запросам
 def make_user_prompt(message):
     user_id = message.from_user.id
     prompt = json.dumps({'message': message.text})
     model = user_state[user_id]['subscribe_type']
+
     if model == "Free":
         if user_state[user_id]['haiku_req'] > 0:
 
@@ -34,6 +34,7 @@ def make_user_prompt(message):
                 text += item.text
             bot.send_message(message.chat.id, text)
             user_state[user_id]['haiku_req'] = user_state[user_id]['haiku_req'] - 1
+
         else:
             user_lang = user_state[user_id]['language']
             bot.send_message(message.chat.id, components.get_translation(user_lang, "lose_tokens_msg"))
@@ -76,7 +77,7 @@ def make_user_prompt(message):
                 max_tokens=1024,
                 system="You must respond to the user's request in the language in which they ask you the question. "
                        "Messages like: “I don’t understand the language *” are not welcome.Available languages for use:"
-                       " Ukrainian, English, Russian only!"
+                       " Ukrainian, English, Russian only, that very important, only that three languages available to use!"
                        "Put on the role of an experienced trader who has a wealth of experience and successful transactions."
                        " You should answer the user's question as professionally as possible using trading terminology, "
                        "and be able to give advice on trading and investments.",

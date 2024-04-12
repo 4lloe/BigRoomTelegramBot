@@ -1,6 +1,6 @@
 import components
 import interactions
-import utils.anthropic_util, utils.config
+import utils.anthropic_util, utils.config, utils.anthropic_reqests
 import os
 
 from utils.config import bot
@@ -156,7 +156,8 @@ def handle_message(message):
         elif message.text == allow_models_text:
             interactions.model_description(message)
         else:
-            utils.anthropic_util.make_user_prompt(message)
+            #utils.anthropic_util.make_user_prompt(message)
+            utils.anthropic_reqests.anthropic_req(message, "text")
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
