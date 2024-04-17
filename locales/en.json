@@ -11,9 +11,11 @@
     "marketer_btn" : "Marketer",
     "programmer_btn" : "Programmer",
     "trader_btn" : "Trader",
+    "ai_model_btn" : "Choose Artificial Intelligence",
     "settings_text" : "In the settings you can change:\n\n1.Select interface language",
     "something_wrong" : "Something wrong, try again",
     "lose_tokens_msg" : "You have spent all your tokens, subscribe to continue using the chat",
+    "nosubscribe_error" : "Функция обработки фотографиії та документов доступна тільки з підпискою",
     "clean_chat_msg": "clean chat",
     "choose_model_settings_text" : "Choose a role for artificial intelligence"
 }

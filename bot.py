@@ -1,30 +1,38 @@
-import components
-import interactions
-import utils.anthropic_util, utils.config, utils.anthropic_reqests
 import os
 
-from utils.config import bot
+# Импортируем необходимые модули
 from telebot import types
 
+# Импортируем различные компоненты и утилиты
+import components
+import interactions
+import utils.anthropic_requests
+import utils.config
+import utils.openai_requests
+
+# Импортируем объект bot из файла utils.config
+from utils.config import bot
 
 
-# Функция реализующая отклик на команду /start вступительной коанды
+# Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def start_command(message):
+    # Получаем id пользователя
     user_id = message.from_user.id
+
+    # Если пользователь не найден в состоянии, инициализируем его
     if user_id not in components.user_state:
         components.user_init(user_id)
-        change_language(message)
+        change_language(message)  # Переходим к выбору языка
     else:
         user_lang = components.user_state[user_id].get('language')
         if not user_lang:
-            change_language(message)
+            change_language(message)  # Если язык не установлен, переходим к выбору языка
         else:
-            models_command(message)
+            models_command(message)  # Выводим доступные модели
 
 
-
-# Функция реализующая отклик на команду /language для установки языка пользователя
+# Обработчик команды /language для выбора языка
 @bot.message_handler(commands=['language'])
 def change_language(message):
     user_id = message.from_user.id
@@ -35,22 +43,26 @@ def change_language(message):
     bot.send_message(user_id, 'Choose language:', reply_markup=markup)
 
 
-# Функция реализующая отклик на команду /settings для вывода меню настроек
+# Обработчик команды /settings для вывода меню настроек
 @bot.message_handler(commands=['settings'])
 def show_settings(message):
+    # Получаем id пользователя и его язык
     user_id = message.from_user.id
     user_lang = components.user_state[user_id]['language']
-    bot.send_message(user_id, interactions.shot_settings_interation(message), reply_markup=components.get_settings_inline_keyboard(user_id))
+    bot.send_message(user_id, interactions.shot_settings_interation(message),
+                     reply_markup=components.get_settings_inline_keyboard(user_id))
 
 
-# Функция реализующая отклик на команду /subscribe для вывода доступных тарифов
+# Обработчик команды /subscribe для вывода доступных тарифов
 @bot.message_handler(commands=['subscribe'])
 def show_subscribe(message):
     user_id = message.from_user.id
     user_lang = components.user_state[user_id]['language']
     interactions.subscribe_text(message)
 
-@bot.message_handler(commands=['models','hub'])
+
+# Обработчик команды /models и /hub
+@bot.message_handler(commands=['models', 'hub'])
 def models_command(message):
     user_id = message.from_user.id
     user_lang = components.user_state[user_id].get('language') if user_id in components.user_state \
@@ -60,11 +72,14 @@ def models_command(message):
     bot.send_message(user_id, interactions.show_bot_preview(user_lang),
                      reply_markup=components.get_preview_inline_keyboard(user_id))
 
+
+# Обработчик для полученных фотографий
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
-    utils.anthropic_reqests.anthropic_req(message, "image")
+    utils.anthropic_requests.anthropic_req(message, "image")
 
 
+# Обработчик для полученных документов
 @bot.message_handler(content_types=['document'])
 def handle_docs(message):
     user_id = message.from_user.id
@@ -87,28 +102,28 @@ def handle_docs(message):
     # Конвертируем PDF в текст
     text = components.convert_to_text(temp_file_path)
 
-    # После использования текста для чего-либо, например, для отправки пользователю
-    utils.anthropic_reqests.anthropic_req(message, "document", text)
+    # Выполняем запрос к модели
+    utils.anthropic_requests.anthropic_req(message, "document", text)
 
-    # Удаляем файл
+    # Удаляем временный файл
     os.remove(temp_file_path)
 
 
-
-# Функция реализующая отклик команды смены языка
+# Обработчик для выбора языка через InlineKeyboard
 @bot.callback_query_handler(func=lambda call: call.data.startswith('lang_'))
 def set_language(call):
-    global language_selected
+    # Получаем id пользователя и выбранный язык
     user_id = call.from_user.id
     lang_code = call.data.split('_')[1]
     is_new_user = user_id not in components.user_state or components.user_state[user_id].get('language') is None
 
+    # Устанавливаем выбранный язык для пользователя
     if user_id not in components.user_state:
         components.user_state[user_id] = {'language': None}
 
     components.user_state[user_id]['language'] = lang_code
-    user_lang = components.user_state[user_id]['language']
 
+    # Отправляем сообщение об успешном выборе языка
     if lang_code == 'en':
         bot.answer_callback_query(call.id, "English selected!")
         language_selected = "🇬🇧 English was selected!"
@@ -119,6 +134,7 @@ def set_language(call):
         bot.answer_callback_query(call.id, "Українська вибрана!")
         language_selected = "🇺🇦 Українська мова встановлена!"
 
+    # Если пользователь новый, удаляем сообщение и показываем главное меню
     if is_new_user:
         bot.delete_message(call.message.chat.id, call.message.message_id)
         components.show_keyboard(user_id, language_selected)
@@ -128,7 +144,7 @@ def set_language(call):
         components.show_keyboard(user_id, language_selected)
 
 
-# Функция реагирования на нажатия клавиш главной клавиатуры
+# Обработчик для остальных сообщений
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     user_id = message.from_user.id
@@ -151,77 +167,89 @@ def handle_message(message):
         elif message.text == allow_models_text:
             interactions.model_description(message)
         else:
-            #utils.anthropic_util.make_user_prompt(message)
-            utils.anthropic_reqests.anthropic_req(message, "text")
+            ai_claude_list = ['claude-3-haiku-20240307', 'claude-3-sonnet-20240229', 'claude-3-opus-20240229']
+            user_sub_type = components.user_state[user_id]['subscribe_type']
+            if user_sub_type in ai_claude_list:
+                utils.anthropic_requests.anthropic_req(message, "text")
+            else:
+                utils.openai_requests.ask_gpt(message, user_id)
     else:
         # Если язык не выбран, запрашиваем его выбор
         change_language(message)
 
 
-# Функция ответа на нажатие кнопки Аккаунт->Купить подписку
+# Обработчики для нажатий на кнопки различных меню
+
+# Обработчик для кнопки Аккаунт -> Купить подписку
 @bot.callback_query_handler(func=lambda call: call.data == 'settings')
 def callback_settings(message):
     show_settings(message)
 
+
+# Обработчик для кнопки Модели -> Модели
 @bot.callback_query_handler(func=lambda call: call.data == 'models_settings')
 def models_call_handler(call):
     models_command(call)
 
-# Функция ответа на нажатие кнопки Аккаунт->Подписка
+
+# Обработчик для кнопки Аккаунт -> Подписка
 @bot.callback_query_handler(func=lambda call: call.data == 'buy_subscribe')
 def callback_subscribe(message):
     show_subscribe(message)
 
 
-# Функция ответа на нажатие кнопки Настройки->Настройки языка
+# Обработчик для кнопки Настройки -> Настройки языка
 @bot.callback_query_handler(func=lambda call: call.data == 'language_settings')
 def callback_language_settings(call):
     change_language(call)
 
 
-# Функция ответа на нажатие кнопки Настройки->Закрыть
+# Обработчик для кнопки Настройки -> Закрыть
 @bot.callback_query_handler(func=lambda call: call.data == 'close_callback')
 def callback_close_settings(call):
     bot.delete_message(call.message.chat.id, call.message.message_id)
 
 
-# Функция ответа на нажатие кнопки Подписка
+# Обработчик для кнопки Подписка
 @bot.callback_query_handler(func=lambda call: call.data == 'subscribe_callback')
 def subscribe_callback(call):
     bot.delete_message(call.message.chat.id, call.message.message_id)
     show_subscribe(call)
 
 
-# Функция ответа на нажатие кнопки Модели->Маркетолог
+# Обработчики для кнопок выбора моделей
+
+# Обработчик для кнопки Модели -> Маркетолог
 @bot.callback_query_handler(func=lambda call: call.data == 'marketer_callback')
 def marketer_callback(call):
     user_id = call.from_user.id
     user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
-    components.user_state[user_id]['current_model'] = 'marketer'
+    components.user_state[user_id]['assistant_role'] = 'marketer'
     description = interactions.marketer_model_description(user_lang)
     bot.send_message(user_id, description)
 
 
-
-# Функция ответа на нажатие кнопки Модели->Програмист
+# Обработчик для кнопки Модели -> Программист
 @bot.callback_query_handler(func=lambda call: call.data == 'programmer_callback')
 def programmer_callback(call):
     user_id = call.from_user.id
     user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
-    components.user_state[user_id]['current_model'] = 'programmer'
+    components.user_state[user_id]['assistant_role'] = 'programmer'
     description = interactions.programmer_model_description(user_lang)
     bot.send_message(user_id, description)
 
 
-# Функция ответа на нажатие кнопки Модели->Трейдер
+# Обработчик для кнопки Модели -> Трейдер
 @bot.callback_query_handler(func=lambda call: call.data == 'trader_callback')
 def trader_callback(call):
     user_id = call.from_user.id
     user_lang = components.user_state[user_id].get('language', 'en')  # Значение по умолчанию - английский
-    components.user_state[user_id]['current_model'] = 'trader'
+    components.user_state[user_id]['assistant_role'] = 'trader'
     description = interactions.trader_model_description(user_lang)
     bot.send_message(user_id, description)
 
+
+# Обработчик для кнопки очистки чата
 @bot.callback_query_handler(func=lambda call: call.data == 'clean_chat')
 def programmer_callback(call):
     user_id = call.from_user.id
@@ -238,4 +266,29 @@ def programmer_callback(call):
                          "Ваш чат с ботом начался! ✨ Введите сообщение на клавиатуре -> отправьте -> получите ответ.")
 
 
+# Обработчик для кнопок выбора AI моделей
+
+# Обработчик для кнопки выбора модели Claude
+@bot.callback_query_handler(func=lambda call: call.data == 'choose_ai_call-handler')
+def select_ai_callback(call):
+    user_id = call.from_user.id
+    user_lang = components.user_state[user_id]['language']
+    components.get_choose_ai_inline_k(user_id)
+
+
+# Обработчик для кнопки выбора модели Claude
+@bot.callback_query_handler(func=lambda call: call.data == 'claude_inline_btn')
+def set_claude_inline_btn(call):
+    user_id = call.from_user.id
+    components.user_state[user_id]['subscribe_type'] = "claude-3-haiku-20240307"
+
+
+# Обработчик для кнопки выбора модели ChatGPT
+@bot.callback_query_handler(func=lambda call: call.data == 'chat-gpt_inline_btn')
+def set_chat_inline_btn(call):
+    user_id = call.from_user.id
+    components.user_state[user_id]['subscribe_type'] = "gpt-3.5-turbo-instruct"
+
+
+# Запускаем бот
 bot.infinity_polling()

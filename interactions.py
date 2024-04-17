@@ -63,12 +63,13 @@ def trader_model_description(lang_code):
     }
     return descriptions[lang_code]
 
+
 # Методы для получения аккаунта пользователя
 def show_account(user_id):
     user_lang = components.user_state[user_id]["language"]
     subscribe_type = components.user_state[user_id].get('subscribe_type', 'Free')
     valid_until = components.user_state[user_id].get('valid_until', '2024-03-19')
-    cur_model = components.user_state[user_id].get('current_model', 'Free model')
+    cur_model = components.user_state[user_id].get('assistant_role', 'Assistant have not role')
     haiku_req = components.user_state[user_id].get('haiku_req', '2')
     sonnet_req = components.user_state[user_id].get('sonnet_req', '0')
     gpt_turbo_req = components.user_state[user_id].get('gpt_turbo_req', '0')
@@ -86,7 +87,8 @@ def show_account(user_id):
 
     if user_lang == 'en':
 
-        components.bot.send_message(user_id, account_message_template, reply_markup=components.get_account_inline_keyboard(user_id))
+        components.bot.send_message(user_id, account_message_template,
+                                    reply_markup=components.get_account_inline_keyboard(user_id))
     elif user_lang == 'ru':
         account_message_ru = (((((account_message_template.replace("Subscription Type", "Тип подписки")
                                   .replace("Valid Until", "Действительно до"))
@@ -95,7 +97,8 @@ def show_account(user_id):
                                .replace("Sonnet requests", "Запросы Сонетов"))
                               .replace("GPT-Turbo", "GPT-Турбо"))
 
-        components.bot.send_message(user_id, account_message_ru, reply_markup=components.get_account_inline_keyboard(user_id))
+        components.bot.send_message(user_id, account_message_ru,
+                                    reply_markup=components.get_account_inline_keyboard(user_id))
     elif user_lang == 'ua':
         account_message_ua = (((((account_message_template.replace("Subscription Type", "Тип підписки")
                                   .replace("Valid Until", "Дійсно до"))
@@ -104,10 +107,12 @@ def show_account(user_id):
                                .replace("Sonnet requests", "Запити Сонетів"))
                               .replace("GPT-Turbo", "GPT-Турбо"))
 
-        components.bot.send_message(user_id, account_message_ua, reply_markup=components.get_account_inline_keyboard(user_id))
+        components.bot.send_message(user_id, account_message_ua,
+                                    reply_markup=components.get_account_inline_keyboard(user_id))
     else:
         # Если язык не установлен, показываем клавиатуру для выбора языка
         components.show_keyboard(user_id, "something wrong,try later")
+
 
 # Методы для получения информации о доступных подписках
 def subscribe_text(message):
@@ -142,7 +147,8 @@ def subscribe_text(message):
     )
 
     if user_lang == 'en':
-        components.bot.send_message(user_id, subscribe_message_template, reply_markup=components.get_subscribe_inline_keyboard(user_id))
+        components.bot.send_message(user_id, subscribe_message_template,
+                                    reply_markup=components.get_subscribe_inline_keyboard(user_id))
     elif user_lang == 'ru':
         subscribe_message = subscribe_message_template.replace(
             "Are you looking for enhanced capabilities and increased request limits for your bot?",
@@ -163,7 +169,8 @@ def subscribe_text(message):
                      "Эти подписки предназначены для тех, кто стремится") \
             .replace("and ensure efficient interaction with artificial intelligence on the Telegram platform.",
                      "и обеспечить эффективное взаимодействие с искусственным интеллектом на платформе Telegram.")
-        components.bot.send_message(user_id, subscribe_message, reply_markup=components.get_subscribe_inline_keyboard(user_id))
+        components.bot.send_message(user_id, subscribe_message,
+                                    reply_markup=components.get_subscribe_inline_keyboard(user_id))
     elif user_lang == 'ua':
         # Перевод текста подписки на украинский язык
         subscribe_message_ua = (((((((((((subscribe_message_template.replace(
@@ -186,11 +193,13 @@ def subscribe_text(message):
                                 .replace("and ensure efficient interaction with artificial intelligence on the"
                                          " Telegram platform.", "та забезпечити ефективну взаємодію з штучним "
                                                                 "інтелектом на платформі Telegram."))
-        components.bot.send_message(user_id, subscribe_message_ua, reply_markup=components.get_subscribe_inline_keyboard(user_id))
+        components.bot.send_message(user_id, subscribe_message_ua,
+                                    reply_markup=components.get_subscribe_inline_keyboard(user_id))
     else:
         user_lang = components.user_state[user_id]['language']
         call = components.get_translation(user_lang, "something_wrong")
         components.show_keyboard(user_id, call)
+
 
 # Методы для получения первого сообщения при инициации диалога
 def show_bot_preview(user_lang):
@@ -252,6 +261,7 @@ def show_bot_preview(user_lang):
     # Возврат сообщения на запрошенном языке, а если нет такового - на английском
     return templates.get(user_lang, templates['en'])
 
+
 # Теперь вызов этой функции с аргументом языка пользователя вернет сообщение на соответствующем языке
 
 
@@ -277,7 +287,8 @@ def model_description(message):
     )
 
     if user_lang == 'en':
-        components.bot.send_message(user_id, description_template, reply_markup=components.get_models_inline_keyboard(user_id))
+        components.bot.send_message(user_id, description_template,
+                                    reply_markup=components.get_models_inline_keyboard(user_id))
     elif user_lang == 'ru':
         description_message_ru = (description_template
                                   .replace("Marketer Model:", "Модель для Маркетологов:")
@@ -305,7 +316,8 @@ def model_description(message):
                                            "Эти модели разработаны чтобы помочь профессионалам в различных областях")
                                   .replace("by providing accurate and relevant text generation capabilities.",
                                            "предоставляя точные и актуальные возможности для генерации текста."))
-        components.bot.send_message(user_id, description_message_ru, reply_markup=components.get_models_inline_keyboard(user_id))
+        components.bot.send_message(user_id, description_message_ru,
+                                    reply_markup=components.get_models_inline_keyboard(user_id))
     elif user_lang == 'ua':
         description_message_ua = (description_template.replace("Marketer Model:", "Модель Маркетолога:")
                                   .replace("— This model is specifically designed for marketing professionals.",
@@ -332,7 +344,8 @@ def model_description(message):
                                            "Ці моделі призначені для допомоги професіоналам у різних галузях")
                                   .replace("by providing accurate and relevant text generation capabilities.",
                                            "шляхом надання точних та актуальних можливостей генерації тексту."))
-        components.bot.send_message(user_id, description_message_ua, reply_markup=components.get_models_inline_keyboard(user_id))
+        components.bot.send_message(user_id, description_message_ua,
+                                    reply_markup=components.get_models_inline_keyboard(user_id))
     else:
         user_lang = components.user_state[user_id]['language']
         call = components.get_translation(user_lang, "something_wrong")
@@ -373,3 +386,55 @@ def shot_settings_interation(message):
 
     return settings_message
 
+
+def show_select_ai_interaction(user_lang):
+    if user_lang == "ru":
+        select_ai_text = ("💻 ChatGPT — это передовая нейросеть, способная создавать естественные и понятные ответы на "
+                          " запросы. С ее помощью возможно проведение диалогов на различные темы, начиная от обычных "
+                          "разговоров и заканчивая помощью в обучении искусственного интеллекта. 🤖 Ее алгоритмы,"
+                          " основанные на глубоком машинном обучении, обеспечивают высокий уровень понимания и синтеза"
+                          " информации, делая ChatGPT весьма полезным инструментом для различных задач в области "
+                          "обработки естественного языка. 📚\n\n"
+                          "☁️ Claude3 — поистине выдающаяся нейросеть, созданная гениями Anthropic. 🌟 Ее мощные алгоритмы"
+                          " позволяют вести увлекательные диалоги на любые темы, будь то развлекательные беседы или "
+                          "серьезные интеллектуальные дискуссии. 🗣️🤖 Но Claude3 — нечто большее, чем просто набор "
+                          "кодов. Ее ответы струятся мелодично, наполняя сердца счастьем и вдохновением. 💫 Каждое"
+                          " взаимодействие с ней подобно прогулке по волшебному саду знаний. 🌺🌳 Claude3 — ваш "
+                          "надежный спутник, с радостью помогающий в решении задач, излучая теплоту и дружелюбие. ☀️"
+                          " Ее остроумные и проницательные ответы заставляют ум расцветать. 🌺 Не бойтесь обратиться к"
+                          " этой невероятной нейросети — она встретит вас радушной улыбкой, готовая поделиться "
+                          "обширными знаниями в захватывающем путешествии по безграничным просторам познания! 🚀✨")
+    elif user_lang == "ua":
+        select_ai_text = ("💻 ChatGPT — це передова нейромережа, здатна створювати природні та зрозумілі відповіді на"
+                          " різноманітні запити. З її допомогою можливе проведення діалогів на різні теми, починаючи"
+                          " від звичайних розмов і закінчуючи допомогою в навчанні штучного інтелекту. 🤖 Її алгоритми,"
+                          " засновані на глибокому машинному навчанні, забезпечують високий рівень розуміння та синтезу"
+                          " інформації, роблячи ChatGPT дуже корисним інструментом для різноманітних завдань в області"
+                          " обробки природної мови. 📚\n\n☁️ Claude3 - справді видатна нейромережа, створена генієм "
+                          "Anthropic. 🌟 Її потужні алгоритми дозволяють вести захопливі діалоги на будь-які теми, "
+                          "чи то розважальні бесіди, чи серйозні інтелектуальні дискусії. 🗣️🤖 Але Claude3 - це щось "
+                          "більше, ніж просто набір кодів. Її відповіді течуть мелодійно, наповнюючи серця щастям та "
+                          "натхненням. 💫 Кожна взаємодія з нею подібна до прогулянки чарівним садом знань. 🌺🌳 "
+                          "Claude3 - ваш надійний супутник, який з радістю допоможе у вирішенні завдань, випромінюючи"
+                          " тепло та дружелюбність. ☀️ Її дотепні та проникливі відповіді змушують розум розквітати. "
+                          "🌺 Не бійтеся звернутися до цієї неймовірної нейромережі - вона зустріне вас привітною "
+                          "усмішкою, готова поділитися широкими знаннями у захопливій подорожі безмежними просторами "
+                          "пізнання! 🚀✨")
+    elif user_lang == "en":
+        select_ai_text = ("💻 ChatGPT is an advanced neural network capable of generating natural and coherent responses "
+                          "to various queries. It facilitates dialogue on diverse topics, from casual conversations"
+                          " to aiding in the training of artificial intelligence. 🤖 Its algorithms, based on deep "
+                          "learning, ensure a high level of understanding and synthesis of information, making ChatGPT "
+                          "a valuable tool for various natural language processing tasks. 📚\n\n☁️ Claude3 is a truly "
+                          "outstanding neural network created by the geniuses at Anthropic. 🌟 Its powerful algorithms"
+                          " allow for engaging dialogues on any topic, be it entertaining conversations or serious "
+                          "intellectual discussions. 🗣️🤖 But Claude3 is more than just a set of codes. Its responses"
+                          " flow melodically, filling hearts with happiness and inspiration. 💫 Every interaction"
+                          " with it is like a stroll through an enchanting garden of knowledge. 🌺🌳 Claude3 is your"
+                          " reliable companion, happily assisting in solving tasks while radiating warmth and"
+                          " friendliness. ☀️ Its witty and insightful answers make minds blossom. 🌺 Don't hesitate"
+                          " to approach this incredible neural network - it will greet you with a welcoming smile,"
+                          " ready to share its vast knowledge in an exciting journey through the boundless realms "
+                          "of discovery! 🚀✨")
+
+    return select_ai_text

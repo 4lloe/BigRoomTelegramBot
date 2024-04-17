@@ -4,10 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="prompts &amp; user-ai context update, files reformat">
+    <list default="true" id="deeb23f4-dc8e-4fe2-ab49-22c2bf30aece" name="Changes" comment="Final prompts &amp; user-ai context update, files reformat">
+      <change afterPath="$PROJECT_DIR$/utils/openai_requests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/anthropic_reqests.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/anthropic_reqests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components.py" beforeDir="false" afterPath="$PROJECT_DIR$/components.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interactions.py" beforeDir="false" afterPath="$PROJECT_DIR$/interactions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locales/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/ru.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locales/ua.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/ua.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/anthropic_reqests.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/anthropic_requests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/anthropic_util.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +156,14 @@
       <workItem from="1712653989302" duration="13761000" />
       <workItem from="1712760320937" duration="7136000" />
       <workItem from="1712828465014" duration="14735000" />
-      <workItem from="1712919203981" duration="5019000" />
+      <workItem from="1712919203981" duration="7316000" />
+      <workItem from="1712937583043" duration="2044000" />
+      <workItem from="1712993981599" duration="135000" />
+      <workItem from="1713004977163" duration="3052000" />
+      <workItem from="1713032988187" duration="3440000" />
+      <workItem from="1713185932431" duration="3504000" />
+      <workItem from="1713274854952" duration="6326000" />
+      <workItem from="1713363157350" duration="2181000" />
     </task>
     <task id="LOCAL-00001" summary="bot creation">
       <option name="closed" value="true" />
@@ -303,7 +317,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712922800606</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Final prompts &amp; user-ai context update, files reformat">
+      <option name="closed" value="true" />
+      <created>1712924259873</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1712924259873</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -336,10 +358,11 @@
     <MESSAGE value="GUI update" />
     <MESSAGE value="Prompt vers. back update" />
     <MESSAGE value="prompts &amp; user-ai context update, files reformat" />
-    <option name="LAST_COMMIT_MESSAGE" value="prompts &amp; user-ai context update, files reformat" />
+    <MESSAGE value="Final prompts &amp; user-ai context update, files reformat" />
+    <option name="LAST_COMMIT_MESSAGE" value="Final prompts &amp; user-ai context update, files reformat" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BigRoomTelegramBot$main.coverage" NAME="main Coverage Results" MODIFIED="1711299013443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1712924064108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BigRoomTelegramBot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1713286186391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

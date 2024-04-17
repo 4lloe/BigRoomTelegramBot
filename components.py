@@ -1,45 +1,54 @@
 import json
 import datetime
-from utils.config import  bot
-from telebot import types
-import os
 
-# !!!Заменить на БД
-# Создаем словарь для хранения языка каждого пользователя (в реальном проекте это стоит сохранять в базе данных)
+# Импорт модулей для работы с Telegram API
+import interactions  # Пользовательский модуль, возможно, для взаимодействия с ботом
+from utils.config import bot  # Импорт конфигурации бота
+from telebot import types  # Импорт типов клавиатур для Telegram
+import os  # Импорт модуля для работы с операционной системой
+
+# Создание и инициализация словаря для хранения состояния пользователей
 user_state = {}
+# Создание списка для хранения контекста пользователей
+user_context = []
 
 
-def user_init(user_id):  # Первая инициализация подписки FREE
+# Функция инициализации пользователя при первом входе
+def user_init(user_id):
     if user_id not in user_state:
         user_state[user_id] = {
-            'started': True,
-            'language': None,  # Установка языка по умолчанию, если необходимо
-            'subscribe_type': 'claude-3-haiku-20240307',  # Установка начального типа подписки
-            'valid_until': datetime.date(2024, 3, 19),  # Примерная дата окончания подписки
-            'current_model': None,  # Текущая модель
-            'haiku_req': 3,  # Счётчик запросов хайку
-            'sonnet_req': 0,  # Счётчик запросов соннетов
+            'started': True,  # Флаг первого запуска
+            'language': None,  # Язык пользователя
+            'subscribe_type': 'gpt-3.5-turbo-instruct',  # Тип подписки
+            'valid_until': datetime.date(2024, 3, 19),  # Дата окончания подписки
+            'assistant_role': "No role for now",  # Роль ассистента
+            'haiku_req': 3,  # Счетчик запросов хайку
+            'sonnet_req': 0,  # Счетчик запросов сонетов
             'gptTurbo_req': 0,  # Счетчик запросов GPT-Turbo
-            'payment_type': 'none'
+            'payment_type': 'none'  # Тип оплаты
         }
 
 
+# Загрузка переводов из файла JSON
 def load_translations(lang_code):
     with open(f'locales/{lang_code}.json', 'r', encoding='utf-8') as file:
         return json.load(file)
 
 
+# Кэш для хранения загруженных переводов
 translations_cache = {}
 
 
+# Получение перевода по ключу и языковому коду
 def get_translation(lang_code, key):
-    # Проверяем, загружены ли переводы для языка в кэш
+    # Проверка, есть ли переводы для данного языка в кэше
     if lang_code not in translations_cache:
         translations_cache[lang_code] = load_translations(lang_code)
-    # Получаем перевод по ключу
+    # Получение перевода по ключу
     return translations_cache[lang_code].get(key, "")
 
 
+# Получение языка пользователя по его ID
 def get_user_language(user_id):
     if user_id in user_state:
         return user_state[user_id]
@@ -47,6 +56,7 @@ def get_user_language(user_id):
         return 'en'
 
 
+# Отправка клавиатуры для выбора языка
 def get_user_lang(user_id):
     if user_state[user_id]['language'] is None:
         markup = types.InlineKeyboardMarkup()
@@ -58,7 +68,7 @@ def get_user_lang(user_id):
         show_keyboard(user_id)
 
 
-# Метод реализующий вывод кастомной клавиатуры с опциями
+# Отображение кастомной клавиатуры с опциями
 def show_keyboard(user_id, call):
     if user_id in user_state and user_state[user_id]['language']:
         user_lang = user_state[user_id]['language']
@@ -76,15 +86,15 @@ def show_keyboard(user_id, call):
         get_user_lang(user_id)
 
 
-# Функция создания InlineKeyboard для account
+# Функция создания InlineKeyboard для раздела "Account"
 def get_account_inline_keyboard(user_id):
     user_lang = user_state[user_id]['language']
 
-    # Получаем переводы для кнопок
+    # Получение переводов для кнопок
     settings_text = get_translation(user_lang, "settings_btn")
     buy_premium_text = get_translation(user_lang, "buy_subscribe_btn")
 
-    # Создаем инлайн клавиатуру
+    # Создание инлайн клавиатуры
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text="⚙️" + settings_text, callback_data='settings'))
     markup.add(types.InlineKeyboardButton(text="🌠" + buy_premium_text, callback_data='buy_subscribe'))
@@ -92,22 +102,24 @@ def get_account_inline_keyboard(user_id):
     return markup
 
 
-# Функция создания InlineKeyboard для /settings
+# Функция создания InlineKeyboard для раздела "/settings"
 def get_settings_inline_keyboard(user_id):
     user_lang = user_state[user_id]['language']
 
     language_change_text = get_translation(user_lang, "sb_language_change_btn")
     choose_models_text = get_translation(user_lang, "choose_model_settings_text")
     close_text = get_translation(user_lang, "close_btn")
+    ai_model_text = get_translation(user_lang, "ai_model_btn")
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text="🇺🇦" + language_change_text, callback_data='language_settings'))
     markup.add(types.InlineKeyboardButton(text="👾" + choose_models_text, callback_data='models_settings'))
+    markup.add(types.InlineKeyboardButton(text="🤖" + ai_model_text, callback_data='choose_ai_call-handler'))
     markup.add(types.InlineKeyboardButton(text=close_text, callback_data='close_callback'))
 
     return markup
 
 
-# Функция создания InlineKeyboard для /subscribe
+# Функция создания InlineKeyboard для раздела "/subscribe"
 def get_subscribe_inline_keyboard(user_id):
     global starter_text, intermediate_text, advanced_text
     user_lang = user_state[user_id]['language']
@@ -134,7 +146,7 @@ def get_subscribe_inline_keyboard(user_id):
     return markup
 
 
-# Функция создания InlineKeyboard для /models
+# Функция создания InlineKeyboard для раздела "/models"
 def get_models_inline_keyboard(user_id):
     user_lang = user_state[user_id]['language']
     marketer = get_translation(user_lang, 'marketer_btn')
@@ -172,6 +184,7 @@ def get_preview_inline_keyboard(user_id):
     return markup
 
 
+# Отправка пользователю клавиатуры выбора языка
 def get_language_inline_k(user_id):
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton('English', callback_data='lang_en'))
@@ -180,35 +193,46 @@ def get_language_inline_k(user_id):
     bot.send_message(user_id, 'Choose language:', reply_markup=markup)
 
 
+# Отправка пользователю клавиатуры выбора искусственного интеллекта
+def get_choose_ai_inline_k(user_id):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton('☁️ Claude-3', callback_data='claude_inline_btn'))
+    markup.add(types.InlineKeyboardButton('💻 Chat-GPT', callback_data='chat-gpt_inline_btn'))
+    bot.send_message(user_id, interactions.show_select_ai_interaction(user_lang=user_state[user_id]['language']),
+                     reply_markup=markup)
+
+
+# Выбор языка пользователем
 def choose_language(user_id):
     get_language_inline_k(user_id)
 
 
+# Загрузка и конвертация документа
 def download_and_convert_document(file_id, message):
     file_info = bot.get_file(file_id)
     downloaded_file = bot.download_file(file_info.file_path)
     file_size = file_info.file_size
 
-    # Проверяем размер файла, не больше ли он 10 МБ
+    # Проверка размера файла (не более 10 МБ)
     if file_size > 10 * 1024 * 1024:
-        bot.send_message(message.chat.id, "Файл слишком большой, братишка. Давай что-нибудь поменьше.")
+        bot.send_message(message.chat.id, "The file is too large. Please upload a smaller file.")
         return
 
-    # Сохраняем файл локально
+    # Сохранение файла локально
     with open('temp_file.pdf', 'wb') as new_file:
         new_file.write(downloaded_file)
 
-    # Конвертируем PDF в текст
+    # Конвертация PDF в текст
     text = convert_to_text('temp_file.pdf')
 
-    # Теперь можно использовать текст как угодно...
-    # Например, отправить его обратно пользователю или передать в другую функцию
+    # Отправка текста пользователю
     bot.send_message(message.chat.id, text)
 
-    # Удаляем файл
+    # Удаление временного файла
     os.remove('temp_file.pdf')
 
 
+# Конвертация PDF в текст
 def convert_to_text(inputPDF):
     from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
     from pdfminer.pdfpage import PDFPage
@@ -216,23 +240,25 @@ def convert_to_text(inputPDF):
     from pdfminer.layout import LAParams
     import io
 
-    # PDFResourceManager используется для хранения ресурсов, таких как шрифты и изображения
+    # Использование PDFResourceManager для хранения ресурсов
     res_mgr = PDFResourceManager()
     ret_data = io.StringIO()
     txt_converter = TextConverter(res_mgr, ret_data, laparams=LAParams())
     interpreter = PDFPageInterpreter(res_mgr, txt_converter)
 
-    # Открываем файл
+    # Открытие файла PDF
     with open(inputPDF, 'rb') as in_file:
         for page in PDFPage.get_pages(in_file, caching=True):
             interpreter.process_page(page)
 
     text = ret_data.getvalue()
 
-    # Закрываем конвертер и возвращаем полученный текст
+    # Закрытие конвертера и возврат текста
     txt_converter.close()
     ret_data.close()
     return text
 
+
+# Отправка сообщения об ошибке
 def send_error_message(message):
     bot.send_message(message.chat.id, "Something wrong")
